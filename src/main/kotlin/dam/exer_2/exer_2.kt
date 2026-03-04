@@ -98,6 +98,7 @@ fun calculadoraUsar() {
     var x = 0f
     var output = ""
 
+    // de acordo com o operador usamos a função com a fórmula escolhida e damos output
     when (operador) {
         "+" -> {
             x = sum(primeiroValor!!, segundoValor!!)

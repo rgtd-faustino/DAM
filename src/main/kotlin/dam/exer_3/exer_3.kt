@@ -6,6 +6,7 @@ fun main() {
     val minHeight = 1f
     val maxQualifyingBounces = 15
 
+    // previous height vai mudando os valores à medida que a sequencia vai correndo, é o lambda
     val bounces = generateSequence(currentHeight) { previousHeight ->
         bounceBall(previousHeight, newHeightPercent, minHeight)
     }
