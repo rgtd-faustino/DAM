@@ -11,10 +11,6 @@ class DigitalBook(title: String, author: String, publicationYear: Int, available
         this.format = format
     }
 
-    override fun toString(): String {
-        return "Title: ${this.title}, Author: ${this.author}, Era: ${this.era}, Available copies: ${this.availableCopies}"
-    }
-
     override fun getStorageInfo(): String {
         return "Storage: Stored digitally: ${this.fileSize} MB, Format: ${this.format}."
     }

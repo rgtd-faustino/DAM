@@ -50,8 +50,8 @@ abstract class Book(title:String, author:String, publicationYear: Int, available
         this.availableCopies += 1
     }
 
-    // tecnicamente não é preciso porque a classe é abstrata e não existe um objeto Book, mas se uma subclasse não tiver
-    // um método to string override então usa este
+    // como o toString dos livros específicos seriam iguais podemos fazer esta função na classe mãe visto que as
+    // informações adicionais da storage info estão numa função separada
     override fun toString(): String {
         return "Title: ${this.title}, Author: ${this.author}, Era: ${this.era}, Available copies: ${this.availableCopies}"
     }

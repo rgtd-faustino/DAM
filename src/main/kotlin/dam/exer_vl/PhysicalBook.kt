@@ -11,10 +11,6 @@ class PhysicalBook(title: String, author: String, publicationYear: Int, availabl
         this.hasHardcover = hasHardcover
     }
 
-    override fun toString(): String {
-        return "Title: ${this.title}, Author: ${this.author}, Era: ${this.era}, Available copies: ${this.availableCopies}"
-    }
-
     override fun getStorageInfo():String {
         return "Storage: Physical book: ${this.weight}g, Hardcover: ${if (hasHardcover) "Yes" else "No"}."
     }
