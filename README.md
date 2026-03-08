@@ -9,85 +9,125 @@ Repository URL: https://github.com/GameDevRafael/DAM_TP1
 
 ## 1. Introduction
 
-Trabalho prático com quatro exercícios de consola em Kotlin, com o objetivo de consolidar fundamentos da linguagem antes de avançar para desenvolvimento Android: arrays e coleções, validação de input, sequências lazy e programação orientada a objetos.
+Este trabalho prático tem como objetivo consolidar os fundamentos da linguagem Kotlin através de quatro exercícios independentes. Cada exercício aborda um conjunto diferente de conceitos: arrays e lambdas, operações aritméticas e lógicas, sequências funcionais, e programação orientada a objetos com herança e encapsulamento. O enunciado pedia que cada exercício fosse implementado num package próprio dentro do mesmo projeto Kotlin.
 
 ---
 
 ## 2. System Overview
 
-| Exercício | Pacote | Descrição |
-|---|---|---|
-| Exer 1 | `exer_1` | Três formas de gerar um array com os quadrados de 1 a 50 |
-| Exer 2 | `exer_2` | Calculadora interativa com validação de input e múltiplos operadores |
-| Exer 3 | `exer_3` | Simulação de ressaltos de bola com `generateSequence` |
-| Exer VL | `exer_vl` | Sistema de biblioteca com herança (`Book`, `DigitalBook`, `PhysicalBook`) |
+O projeto é composto por quatro módulos independentes:
+
+- **exer_1** — Geração de arrays com os quadrados dos números de 1 a 50, usando três abordagens distintas.
+- **exer_2** — Calculadora interativa com suporte a operadores aritméticos, lógicos e de bit shift.
+- **exer_3** — Simulação de ressalto de bola usando `generateSequence` e programação funcional.
+- **exer_vl** — Sistema de biblioteca com livros digitais e físicos, herança, getters/setters e companion objects.
+
+Todos os módulos correm em linha de comandos (console) sem interface gráfica.
 
 ---
 
-## 3. Implementation
+## 3. Architecture and Design
 
-### Exercício 1 — Arrays
-Implementadas três abordagens para o mesmo resultado: `IntArray` com lambda indexado, range `(1..50)` com `map`, e `Array` genérico. O principal aprendizado foi a distinção entre `it` (parâmetro lambda implícito, sem `->`) e `i` (parâmetro explícito, com `->`), e perceber que os índices começam em 0, logo é necessário `i + 1`.
+### exer_1
+Três abordagens para construir um `IntArray` com os quadrados de 1 a 50:
+1. `IntArray(50) { i -> ... }` com índice explícito.
+2. Range `(1..50).map { it * it }` convertida para array.
+3. `Array(50) { i -> ... }` com tipo genérico.
 
-### Exercício 2 — Calculadora
-As operações foram separadas em funções puras (`sum`, `subtract`, etc.), mantendo o `main()` limpo. A validação usa `toFloatOrNull()` em loops até receber input válido. A divisão por zero lança uma `IllegalArgumentException` capturada com `try-catch`. O operador `!` é tratado antes de pedir o segundo valor, pois não o requer.
+### exer_2
+Funções top-level separadas por operação (`sum`, `subtract`, `divide`, etc.). O fluxo principal em `calculadoraUsar()` valida inputs em loop antes de os usar, evitando crashes por input inválido.
+
+### exer_3
+Uso de `generateSequence` para modelar a sequência de ressaltos. A função `bounceBall` retorna `Float?` — quando a altura cai abaixo do mínimo, retorna `null`, terminando a sequência naturalmente.
+
+### exer_vl
+Hierarquia de classes:
+- `Book` (abstract) → `DigitalBook`, `PhysicalBook`
+- `Library` com `companion object` para estado partilhado
+- `LibraryMember` como `data class`
+
+---
+
+## 4. Implementation
+
+### exer_1 — Arrays e Lambdas
+O enunciado pedia três formas de criar um array com os quadrados de 1 a 50. A principal dificuldade foi perceber que o índice do `IntArray` começa em 0, logo foi necessário fazer `i + 1` para obter a base correta. Aprendi a distinção entre usar `i` (quando se declara uma variável lambda antes da seta `->`) e `it` (quando não se declara):
 
 ```kotlin
-fun divideCheck(b: Float): Boolean {
-    return if (b == 0f) throw IllegalArgumentException("Não podes dividir por 0!") else true
+val array1 = IntArray(50) { i -> val base = i + 1; base * base }
+val lista = (1..50).map { it * it }
+```
+
+Para o output usei `.replace()` com um placeholder, o que tornou o código mais reutilizável.
+
+### exer_2 — Calculadora
+O enunciado pedia suporte a `+`, `-`, `*`, `/`, `||`, `&&`, `!`, `shl`, `shr`, com validação de inputs. A lógica de validação foi colocada em loops `while(true)` com `break` quando o input é válido. Para a divisão por zero, optei por lançar uma `IllegalArgumentException` dentro de `divideCheck()` e capturá-la com `try/catch` no `when`. O operador `!` não precisa de segundo valor, por isso tem um `return` antecipado antes de pedir o segundo operando:
+
+```kotlin
+if (operador == "!") {
+    val x = not(primeiroValor!!)
+    print("!$primeiroValor: $x")
+    return
 }
 ```
 
-### Exercício 3 — Bounce Ball
-Usada `generateSequence` para gerar uma sequência lazy que termina quando `bounceBall` retorna `null` (altura abaixo do mínimo). O `take(15)` recolhe os primeiros 15 ressaltos válidos sem materializar a sequência inteira.
+### exer_3 — Sequência de Ressaltos
+O enunciado pedia simular ressaltos de bola usando programação funcional. Usei `generateSequence` com um lambda que multiplica a altura anterior por `newHeightPercent`. Quando a altura fica abaixo de `minHeight`, `bounceBall` retorna `null`, o que termina a sequência. `.take(15)` limita o output aos primeiros 15 ressaltos válidos.
+
+### exer_vl — Biblioteca OOP
+O enunciado pedia uma hierarquia de classes com herança, getters/setters e companion object. A maior dificuldade foi o setter de `availableCopies`: ao tentar escrever `availableCopies = value` dentro do setter, o compilador assinalava um aviso. Consultei a documentação e percebi que dentro de um setter se deve usar `field` para referenciar o backing field:
 
 ```kotlin
-val bounces = generateSequence(currentHeight) { prev ->
-    bounceBall(prev, newHeightPercent, minHeight)
-}
+var availableCopies: Int = availableCopiesGetter
+    set(value) {
+        if (value >= 0) field = value
+    }
 ```
 
-### Exercício VL — Biblioteca
-Hierarquia `Book → DigitalBook / PhysicalBook`, com a classe `Library` a gerir uma lista mutável. Os métodos `borrowBook` e `returnBook` verificam disponibilidade de cópias antes de alterar o estado. Em Kotlin as classes são `final` por defeito, pelo que foi necessário marcá-las com `open` para permitir herança.
+O `toString()` foi implementado na classe mãe `Book`, pois as subclasses partilham a mesma estrutura base. A informação específica de cada tipo de livro foi isolada em `getStorageInfo()`, que é `abstract` e obrigatoriamente implementada pelas subclasses.
 
 ---
 
-## 4. Testing and Validation
+## 5. Testing and Validation
 
-Testes manuais em todos os exercícios. Pontos verificados:
-- **Exer 1:** Primeiro elemento 1 (1²), último 2500 (50²), nas três abordagens.
-- **Exer 2:** Input inválido → programa pede novamente; divisão por zero → mensagem de erro sem crash; `sair` → termina o programa.
-- **Exer 3:** Exatamente 15 ressaltos impressos, valores a decrescer a partir de 100.
-- **Exer VL:** Empréstimo sem cópias disponíveis falha corretamente; devolução incrementa as cópias; pesquisa por autor filtra corretamente.
+Os testes foram feitos manualmente correndo cada `main()` e verificando o output. Para o **exer_2**, testei casos de erro (input não numérico, operador inválido, divisão por zero) para garantir que os loops de validação funcionavam corretamente. Para o **exer_vl**, testei `borrowBook` com mais pedidos do que cópias disponíveis e `returnBook` após esgotar o stock.
 
 ---
 
-## 5. Usage Instructions
+## 6. Usage Instructions
 
-1. Clonar o repositório e abrir no IntelliJ IDEA como projeto Kotlin/Gradle.
-2. Navegar até ao `main.kt` do exercício desejado e executar a função `main()`.
-3. No Exercício 2 (interativo): introduzir os valores e operador quando pedido. Para sair, escrever `sair` no primeiro prompt.
-
----
-
-## 6. Difficulties and Lessons Learned
-
-- **`it` vs parâmetro explícito:** `it` só está disponível quando o parâmetro do lambda não é declarado explicitamente — levou algum tempo a interiorizar.
-- **Nullable types:** O compilador forçar o tratamento de `null` pareceu burocrático no início, mas previne NullPointerExceptions que seriam silenciosas em Java.
-- **Sequências lazy:** `generateSequence` não avalia elementos imediatamente, só quando consumidos — conceito contra-intuitivo mas poderoso.
-- **Código duplicado na calculadora:** A validação de operadores ficou repetida antes e dentro do loop. Deveria ter sido extraída para uma função auxiliar.
+1. Abrir o projeto no IntelliJ IDEA.
+2. Navegar até ao package do exercício pretendido (ex: `org.example.dam.exer_2`).
+3. Executar a função `main()` do ficheiro correspondente.
+4. Para o **exer_2**, seguir as instruções no terminal (introduzir números e operadores quando pedido; escrever `sair` para terminar).
 
 ---
 
-## 7. Future Improvements
+# Development Process
 
-- Extrair a validação de input da calculadora para funções reutilizáveis.
-- Adicionar modo interativo ao Exercício 3 (configurar altura e percentagem em runtime).
-- Adicionar persistência à biblioteca (ficheiro JSON) e uma interface Android.
-- Escrever testes unitários com JUnit para os casos limite de cada exercício.
+## 12. Version Control and Commit History
+
+O repositório foi gerido com Git através do IntelliJ IDEA. Os commits foram organizados por exercício, fazendo commit após cada exercício estar funcional e testado. O repositório está disponível em: `https://github.com/GameDevRafael/DAM_TP1`
 
 ---
 
-## 8. AI Usage Disclosure
+## 13. Difficulties and Lessons Learned
 
-Foi utilizado o Claude (Anthropic) para esclarecer dúvidas conceptuais sobre `generateSequence`, nullable types e lambdas, e para a redação deste README. Todo o código foi escrito e compreendido pelo estudante — a IA foi usada como ferramenta de apoio, não como substituto da implementação.
+- **Índices em lambdas (exer_1):** Perceber que `IntArray` começa em índice 0 e que `it` vs `i` depende de se declaramos ou não uma variável lambda explícita.
+- **Backing field (exer_vl):** O uso de `field` dentro de um setter foi uma descoberta importante — sem ele, o setter entraria em recursão infinita.
+- **`generateSequence` com null (exer_3):** Compreender que retornar `null` num lambda de `generateSequence` é a forma idiomática de terminar a sequência em Kotlin.
+- **`!!` vs `?.` (exer_2):** Aprendi a diferença entre o operador `!!` (força não-nulo, lança exceção se nulo) e `?.` (safe call). Usei `!!` nos pontos onde a validação anterior já garantia que o valor não era nulo.
+
+---
+
+## 14. Future Improvements
+
+- **exer_2:** Adicionar histórico de operações e suporte a expressões compostas (ex: `3 + 4 * 2`).
+- **exer_vl:** Implementar persistência (guardar a biblioteca em ficheiro JSON), associar `LibraryMember` ao sistema de empréstimos, e adicionar pesquisa por era ou ano.
+- **exer_3:** Tornar os parâmetros configuráveis via input do utilizador em vez de valores fixos.
+
+---
+
+## 15. AI Usage Disclosure
+
+O assistente de IA (Claude, da Anthropic) foi utilizado para gerar a estrutura e o texto deste README com base no código fornecido, nos comentários presentes no código e nas instruções do estudante. Todo o código dos exercícios foi escrito pelo estudante. A IA não foi usada para resolver os exercícios nem para escrever código — apenas para apoio na documentação escrita.
