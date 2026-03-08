@@ -1,36 +1,31 @@
 # Assignment 5 — Building a System Info App
 Course: Desenvolvimento de Aplicações Móveis
 Student(s): A51394 Rafael Faustino
-Date: Março 2026
-Repository URL: https://github.com/GameDevRafael/DAM_TP1_SystemInfo/
+Date: 08/03/2026
+Repository URL: https://github.com/GameDevRafael/DAM_TP1_SystemInfo
 
 ## 1. Introduction
-O objetivo deste exercício era desenvolver uma aplicação Android simples capaz de extrair e apresentar as informações de hardware e sistema operativo do dispositivo atual (system build information). Este exercício serviu como uma introdução à exploração das APIs nativas do Android, permitindo-me compreender como uma aplicação acede aos componentes de contexto do sistema onde está a ser executada. A informação extraída devia ser unificada e apresentada no ecrã através de um componente de texto multilinha (**MultiLine TextView**).
+O objetivo deste exercício era criar uma aplicação Android simples que lesse e mostrasse informações sobre o hardware e o sistema operativo do dispositivo. Serviu como uma introdução às APIs nativas do Android, permitindo-me perceber como uma app consegue aceder a dados do sistema onde está a correr. A informação recolhida devia ser apresentada num componente de texto multilinha (MultiLine TextView).
 
 ## 2. System Overview
-A "System Info App" é uma aplicação simples de ecrã único. Ao abrir, a aplicação comunica com os serviços do sistema Android subjacente, recolhe uma listagem variada de informações associadas ao ambiente de execução e à máquina física (ou virtual), e formata tudo com clareza. O produto final é semelhante à imagem de referência fornecida pelo enunciado do exercício, exibindo os dados crus diretamente na interface principal da aplicação.
+A "System Info App" é uma aplicação de ecrã único. Ao abrir, vai buscar um conjunto de informações sobre o dispositivo (físico ou virtual) e apresenta tudo formatado na interface principal. O resultado é parecido com a imagem de referência do enunciado, mostrando os dados diretamente no ecrã.
 
 ## 3. Architecture and Design
-A arquitetura base assenta na estrutura standard de componentes nativos Android, com uma única atividade: a `MainActivity`. A interface de utilizador (UI) no layout XML foca-se puramente na funcionalidade, incluindo apenas um `TextView` central configurado no ecrã para expansão de múltiplas linhas.
-
-A nível de design de software estrutural, a aplicação segue uma abordagem procedural simples inserida no ciclo de vida da atividade. Assim que o método `onCreate` é disparado, todos os dados são instanciados sequencialmente a partir de classes utilitárias globais estáticas do Android e depois mapeados para a UI.
+A app tem uma única atividade, a `MainActivity`. O layout XML contém apenas um `TextView` configurado para mostrar múltiplas linhas de texto. Não há arquitetura complexa — assim que o `onCreate` é executado, os dados são lidos das classes do sistema Android e passados diretamente para a UI.
 
 ## 4. Implementation
-Para a implementação do exercício, não foi necessário adicionar nenhuma dependência ou biblioteca externa (manteve-se o ambiente limpo). Utilizei apenas as bibliotecas padrão do sistema Android, nomeadamente a classe `android.os.Build` para processamento logístico e `android.widget.TextView` para a renderização visual.
+Não precisei de adicionar nenhuma dependência externa. Usei apenas as bibliotecas padrão do Android, nomeadamente a classe `android.os.Build` para aceder às informações do sistema e `android.widget.TextView` para as mostrar.
 
-Consoante o pedia o enunciado da atividade, foram declaradas variáveis focadas em aceder de forma direta aos atributos do sistema Android disponíveis na API nativa. O acesso aos dados ocorreu com o mapeamento das propriedades de sistema através das chamadas estáticas em `Build`. 
-
-A obtenção da informação foi efetuada mapeando:
+Os campos que mapeei foram:
 - **Manufacturer:** `Build.MANUFACTURER`
 - **Brand:** `Build.BRAND`
 - **Device:** `Build.DEVICE`
 - **Model:** `Build.MODEL`
 - **Android Version:** `Build.VERSION.RELEASE`
 - **SDK Version:** `Build.VERSION.SDK_INT`
-- Entre outros (Displays, Incremental Builds, etc.).
+- Entre outros (display, incremental build, etc.).
 
-**Exemplo Prático de Código:**
-Foi usada a funcionalidade de *Raw Strings* trimáveis do Kotlin (`"""..."""`) de forma a encadear as respostas numa String formatada legível contendo variadas linhas. 
+Para formatar o texto usei raw strings do Kotlin (`"""..."""`) com `.trimIndent()`, o que tornou o código mais limpo do que concatenar strings manualmente:
 
 ```kotlin
 val info = """
@@ -47,36 +42,30 @@ systemInfo.setText(info)
 ```
 
 ## 5. Testing and Validation
-Como não possuía um dispositivo físico disponível para teste com a API target, a aplicação foi totalmente simulada e testada num **emulador Android** dentro do ambiente do Android Studio. 
-Durante a observação, comprovei que o resultado no emulador era autêntico (no qual o fabricante devolveu tipicamente "Google", o modelo e a board exibiam os metadados característicos da máquina virtual, etc.). Com base na verificação contínua, o texto renderizou eficazmente, suportando as diferentes linhas, de acordo com o planeado na imagem de entrega de referência.
+Não tinha um dispositivo físico disponível, por isso testei tudo num emulador Android dentro do Android Studio. Verifiquei que os dados apareciam corretamente — o fabricante aparecia como "Google", o modelo mostrava os metadados do dispositivo virtual, e o texto multilinha renderizava bem, de acordo com a imagem de referência do enunciado.
 
 ## 6. Usage Instructions
-1. Efetue o clone do repositório correspondente para a sua máquina de trabalho.
-2. Na janela inicial do **Android Studio**, abra a pasta raiz do projeto.
-3. Aguarde o fim do *Gradle Sync*.
-4. Compile e execute o projeto utilizando o botão **Run** ou o atalho usual, focando a saída para um Emulador já inicializado.
-5. O layout aparecerá automaticamente no ecrã exibindo as strings em multilinha com os dados locais do dispositivo.
+1. Fazer clone do repositório para o computador.
+2. Abrir a pasta raiz do projeto no Android Studio.
+3. Aguardar o fim do Gradle Sync.
+4. Compilar e executar com o botão Run, com um emulador já iniciado.
+5. O ecrã vai aparecer automaticamente com as informações do dispositivo em multilinha.
+
+---
 
 # Development Process
 
 ## 12. Version Control and Commit History
-O processo de desenvolvimento foi salvaguardado pelo sistema de controlo de versões Git. O percurso consistiu na:
-1. Geração do *boilerplate* do app em Android Studio.
-2. Ajuste do XML para conter um TextView que permitisse *scrolling* ou acomodação de longo texto.
-3. Implementação da injeção de texto dinâmico recolhido da documentação de sistema no ficheiro de código `MainActivity.kt`.
-4. Correções menores de legibilidade relativas às métricas extraídas para a vista final.
+O desenvolvimento foi guardado com Git. Os commits seguiram a progressão do trabalho: geração do projeto base, ajuste do XML para suportar texto longo, implementação da leitura dos dados do sistema no `MainActivity.kt`, e pequenas correções de formatação.
 
 ## 13. Difficulties and Lessons Learned
-No início do exercício, não sabia propriamente como poderia invocar ou aceder com segurança às informações do dispositivo a nível de kernel ou camada aplicacional. Isto inicialmente causou alguma confusão sobre o ponto de partida do problema.
-
-Contudo, após parar para consultar a **documentação oficial Android para desenvolvedores**, compreendi claramente a utilidade da classe de base utilitária `android.os.Build`, a qual retira este tipo de dados a partir das propriedades nativas do sistema. Com a leitura atenta da API pública da Google, pude discernir entre qualismos como `Build.VERSION.SDK_INT` versus `Build.VERSION.RELEASE`.
-  
-A partir do momento em que clarifiquei o conceito pela documentação, o processo em si tornou-se relativamente simplificado. Consistiu apenas em selecionar a informação de interesse pretendida a partir da classe lida, inseri-la num encapsulador de texto multilinha e invocar a mudança para a view de destino na atividade principal.  
-A maior lição que retiro desta atividade corrobora que a pesquisa analítica a partir da documentação nativa é frequentemente o passo mais elementar para dissolver complexidades aparentemente intransponíveis a nível de construção arquitetural.
+No início não sabia bem como aceder às informações do dispositivo — não estava claro por onde começar. Depois de consultar a documentação oficial do Android para developers, percebi que a classe `android.os.Build` era exatamente o que precisava, e que tem atributos estáticos para tudo o que o enunciado pedia. Também aprendi a diferença entre `Build.VERSION.SDK_INT` (o número inteiro da API) e `Build.VERSION.RELEASE` (a versão legível como "14"). A principal lição foi que ler a documentação oficial antes de tentar resolver o problema poupa muito tempo.
 
 ## 14. Future Improvements
-* Refabricar a Interface Gráfica substituindo a *String* monolita num simples TextView por um componente modular como uma `RecyclerView` formatada com aspeto Chave-Valor, que confere um aspeto e comportamento mais polido de interface de sistema genuína.
-* Implementar mecanismos práticos comuns destas ferramentas (como uma ação de *partilha* ou opção num canto para "*Copy properties to clipboard*").
+- Substituir o TextView por uma `RecyclerView` com pares chave-valor, o que ficaria mais legível e organizado.
+- Adicionar um botão para copiar as informações para a área de transferência.
+
+---
 
 ## 15. AI Usage Disclosure
-Neste trabalho, ferramentas de Inteligência Artificial foram utilizadas como suporte para garantir a coesão semântica e gramatical na elaboração do documento `README.md` explicativo, assegurando que o texto ficasse profissional e com excelente legibilidade. Todavia, refiro que toda a descoberta literária inicial e interpretação das utilidades através da documentação oficial do `android.os.Build`, bem como as reestruturações de fluxo no código, derivaram do meu esforço lógico, empírico e pensamento dedutivo original.
+Usei IA (Claude, da Anthropic) para ajudar a escrever e rever o texto deste README, garantindo que ficasse claro e bem estruturado. Todo o código foi escrito por mim com base na documentação oficial do Android. A IA não foi usada para escrever código.
