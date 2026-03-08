@@ -1,8 +1,8 @@
 # Assignment 1 — Kotlin Fundamentals
 
-Course: Desenvolvimento de Aplicações Móveis (DAM)
+Course: Desenvolvimento de Aplicações Móveis
 Student(s): A51394 Rafael Faustino
-Date: 2026
+Date: 08/03/2026
 Repository URL: https://github.com/GameDevRafael/DAM_TP1
 
 ---
