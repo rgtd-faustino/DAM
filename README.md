@@ -72,7 +72,7 @@ if (operador == "!") {
 ```
 
 ### exer_3 — Sequência de Ressaltos
-O enunciado pedia simular ressaltos de bola usando programação funcional. Usei `generateSequence` com um lambda que multiplica a altura anterior por `newHeightPercent`. Quando a altura fica abaixo de `minHeight`, `bounceBall` retorna `null`, o que termina a sequência. `.take(15)` limita o output aos primeiros 15 ressaltos válidos.
+O enunciado pedia simular ressaltos de bola usando programação funcional, e pedia explicitamente o uso de `filter` para excluir ressaltos abaixo de 1 metro. Na implementação, optei por colocar a lógica de filtragem dentro da função `bounceBall`, que retorna `null` quando a altura cai abaixo de `minHeight` — o que termina a sequência automaticamente via `generateSequence`. O resultado final é funcionalmente equivalente, mas o `filter` não foi usado explicitamente como pedido. Isto é uma limitação conhecida da implementação: o correto seria encadear `.filter { it >= minHeight }` sobre a sequência antes do `.take(15)`, mantendo `bounceBall` a retornar sempre um valor. `.take(15)` limita o output aos primeiros 15 ressaltos válidos.
 
 ### exer_vl — Biblioteca OOP
 O enunciado pedia uma hierarquia de classes com herança, getters/setters e companion object. A maior dificuldade foi o setter de `availableCopies`: ao tentar escrever `availableCopies = value` dentro do setter, o compilador assinalava um aviso. Consultei a documentação e percebi que dentro de um setter se deve usar `field` para referenciar o backing field:
@@ -85,6 +85,18 @@ var availableCopies: Int = availableCopiesGetter
 ```
 
 O `toString()` foi implementado na classe mãe `Book`, pois as subclasses partilham a mesma estrutura base. A informação específica de cada tipo de livro foi isolada em `getStorageInfo()`, que é `abstract` e obrigatoriamente implementada pelas subclasses.
+
+O enunciado pedia também uma `data class` `LibraryMember`. Usei `data class` porque o Kotlin gera automaticamente `equals()`, `hashCode()` e `copy()`, o que é adequado para um objeto que representa apenas dados sem comportamento próprio. A lista `borrowedBooks` foi declarada como `MutableList<String>` com valor por defeito vazio, armazenando títulos em vez de referências a objetos `Book` para evitar dependências desnecessárias:
+
+```kotlin
+data class LibraryMember(
+    val name: String,
+    val membershipId: Int,
+    val borrowedBooks: MutableList<String> = mutableListOf()
+)
+```
+
+Nota: `LibraryMember` foi declarada mas não integrada no sistema de empréstimos da `Library` — a ligação entre membros e as operações `borrowBook`/`returnBook` ficou como melhoria futura.
 
 ---
 
