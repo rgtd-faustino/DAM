@@ -1,4 +1,4 @@
-# Assignment 1 — Investment Calculator (Hello World)
+# Assignment 4 — Investment Calculator (Hello World)
 Course: Desenvolvimento de Aplicações Móveis (DAM)
 Student(s): A51394 Rafael Faustino
 Date: 2026
