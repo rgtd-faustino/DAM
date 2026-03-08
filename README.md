@@ -1,4 +1,4 @@
-# Assignment X — Building a System Info App
+# Assignment 5 — Building a System Info App
 Course: Desenvolvimento de Aplicações Móveis
 Student(s): A51394 Rafael Faustino
 Date: Março 2026
