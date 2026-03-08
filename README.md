@@ -2,7 +2,7 @@
 Course: Desenvolvimento de Aplicações Móveis (DAM)
 Student(s): A51394 Rafael Faustino
 Date: 2026
-Repository URL: https://github.com/GameDevRafael/DAM_TP1
+Repository URL: https://github.com/GameDevRafael/DAM_TP1_HelloWorld
 
 ## 1. Introduction
 O que era pedido no enunciado: Desenvolver a primeira aplicação Android base da cadeira que vai além do típico "Hello World" num ecrã vazio. O projeto requeria que fossem construídas vistas diferentes para duas orientações (Portrait e Landscape), utilizando interações entre botões, inputs, notificações dinâmicas (Toast) e exploração das saídas de depuração e filtragem através de LogCat (ADB). As diferentes lógicas da App são concentradas com as "Views" centrais da paleta Android no desenvolvimento da App ("Investment Calculator").
