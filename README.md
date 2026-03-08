@@ -2,7 +2,7 @@
 Course: Desenvolvimento de Aplicações Móveis
 Student(s): A51394 Rafael Faustino
 Date: Março 2026
-Repository URL: [Inserir URL do repositório]
+Repository URL: https://github.com/GameDevRafael/DAM_TP1_SystemInfo/
 
 ## 1. Introduction
 O objetivo deste exercício era desenvolver uma aplicação Android simples capaz de extrair e apresentar as informações de hardware e sistema operativo do dispositivo atual (system build information). Este exercício serviu como uma introdução à exploração das APIs nativas do Android, permitindo-me compreender como uma aplicação acede aos componentes de contexto do sistema onde está a ser executada. A informação extraída devia ser unificada e apresentada no ecrã através de um componente de texto multilinha (**MultiLine TextView**).
