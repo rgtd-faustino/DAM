@@ -1,117 +1,175 @@
-# Assignment 1 — Kotlin Fundamentals
+# Tutorial 1 — Hello Kotlin. Hello Android World!
 
-Course: Desenvolvimento de Aplicações Móveis
-Student(s): A51394 Rafael Faustino
-Date: 08/03/2026
-Repository URL: https://github.com/GameDevRafael/DAM_TP1
-
----
-
-## 1. Introduction
-
-Este trabalho prático tem como objetivo consolidar os fundamentos da linguagem Kotlin através de quatro exercícios independentes. Cada exercício aborda um conjunto diferente de conceitos: arrays e lambdas, operações aritméticas e lógicas, sequências funcionais, e programação orientada a objetos com herança e encapsulamento. O enunciado pedia que cada exercício fosse implementado num package próprio dentro do mesmo projeto Kotlin.
+**Course:** Desenvolvimento de Aplicações Móveis (DAM)  
+**Student:** A51394 Rafael Faustino  
+**Date:** 10/03/2026  
+**Repository URL:** [DAM_TP1](https://github.com/GameDevRafael/DAM_TP1)
 
 ---
 
-## 2. System Overview
+## 1. Introdução
 
-O projeto é composto por quatro módulos independentes:
+Este relatório descreve o desenvolvimento do Tutorial 1 da unidade curricular de Desenvolvimento de Aplicações Móveis (DAM) do ISEL. O objetivo principal deste trabalho foi ganhar familiaridade com a linguagem Kotlin, explorando as suas funcionalidades básicas e intermédias num contexto prático, antes de avançar para o desenvolvimento Android propriamente dito.
 
-- **exer_1** — Geração de arrays com os quadrados dos números de 1 a 50, usando três abordagens distintas.
-- **exer_2** — Calculadora interativa com suporte a operadores aritméticos, lógicos e de bit shift.
-- **exer_3** — Simulação de ressalto de bola usando `generateSequence` e programação funcional.
-- **exer_vl** — Sistema de biblioteca com livros digitais e físicos, herança, getters/setters e companion objects.
-
-Todos os módulos correm em linha de comandos (console) sem interface gráfica.
+O projeto foi desenvolvido como uma aplicação Kotlin/Maven organizada em quatro packages independentes, cada um focado num tema ou conjunto de conceitos específicos: arrays e funções, calculadoras com tratamento de exceções, sequências funcionais e modelação orientada a objetos.
 
 ---
 
-## 3. Architecture and Design
+## 2. Visão Geral do Sistema
 
-### exer_1
-Três abordagens para construir um `IntArray` com os quadrados de 1 a 50:
-1. `IntArray(50) { i -> ... }` com índice explícito.
-2. Range `(1..50).map { it * it }` convertida para array.
-3. `Array(50) { i -> ... }` com tipo genérico.
+O projeto `DAM_TP1` está estruturado como um projeto Kotlin com Maven e contém quatro exercícios distintos:
 
-### exer_2
-Funções top-level separadas por operação (`sum`, `subtract`, `divide`, etc.). O fluxo principal em `calculadoraUsar()` valida inputs em loop antes de os usar, evitando crashes por input inválido.
+- **`dam.exer_1`** — Geração de arrays de quadrados perfeitos utilizando três abordagens diferentes.
+- **`dam.exer_2`** — Calculadora interativa com suporte a operações aritméticas, lógicas e de deslocamento de bits.
+- **`dam.exer_3`** — Cálculo de alturas de ressalto de uma bola utilizando `generateSequence`.
+- **`dam.exer_vl`** — Sistema de biblioteca virtual com hierarquia de classes, membros e operações de empréstimo.
 
-### exer_3
-Uso de `generateSequence` para modelar a sequência de ressaltos. A função `bounceBall` retorna `Float?` — quando a altura cai abaixo do mínimo, retorna `null`, terminando a sequência naturalmente.
-
-### exer_vl
-Hierarquia de classes:
-- `Book` (abstract) → `DigitalBook`, `PhysicalBook`
-- `Library` com `companion object` para estado partilhado
-- `LibraryMember` como `data class`
+Cada package tem o seu próprio `main()` e pode ser executado de forma independente.
 
 ---
 
-## 4. Implementation
+## 3. Arquitetura e Design
 
-### exer_1 — Arrays e Lambdas
-O enunciado pedia três formas de criar um array com os quadrados de 1 a 50. A principal dificuldade foi perceber que o índice do `IntArray` começa em 0, logo foi necessário fazer `i + 1` para obter a base correta. Aprendi a distinção entre usar `i` (quando se declara uma variável lambda antes da seta `->`) e `it` (quando não se declara):
+### Exercício 1 — Arrays de Quadrados Perfeitos
 
+Foram implementados três métodos distintos para gerar um array com os primeiros 50 quadrados perfeitos:
+
+1. Usando o construtor `IntArray(n) { lambda }`.
+2. Usando um `range` com `map {}` e conversão para `IntArray`.
+3. Usando o construtor `Array<Int>(n) { lambda }`.
+
+A escolha de três abordagens distintas foi intencional para demonstrar a flexibilidade do Kotlin na manipulação de coleções e arrays.
+
+### Exercício 2 — Calculadora
+
+A calculadora foi implementada com um loop `while` que mantém o programa em execução até o utilizador introduzir `"sair"`. A estrutura `when` foi usada para despachar as operações, e o tratamento de exceções com `try/catch` foi aplicado na divisão por zero.
+
+A validação dos inputs é feita com ciclos `while(true)` com `break`, garantindo que o programa não avança com dados inválidos.
+
+### Exercício 3 — Bounce Heights
+
+A sequência de alturas de ressalto é gerada com `generateSequence`. A primeira abordagem passava por uma função auxiliar `bounceBall()` separada, responsável por calcular a nova altura e retornar `null` quando esta ficasse abaixo do mínimo:
 ```kotlin
-val array1 = IntArray(50) { i -> val base = i + 1; base * base }
-val lista = (1..50).map { it * it }
-```
-
-Para o output usei `.replace()` com um placeholder, o que tornou o código mais reutilizável.
-
-### exer_2 — Calculadora
-O enunciado pedia suporte a `+`, `-`, `*`, `/`, `||`, `&&`, `!`, `shl`, `shr`, com validação de inputs. A lógica de validação foi colocada em loops `while(true)` com `break` quando o input é válido. Para a divisão por zero, optei por lançar uma `IllegalArgumentException` dentro de `divideCheck()` e capturá-la com `try/catch` no `when`. O operador `!` não precisa de segundo valor, por isso tem um `return` antecipado antes de pedir o segundo operando:
-
-```kotlin
-if (operador == "!") {
-    val x = not(primeiroValor!!)
-    print("!$primeiroValor: $x")
-    return
+fun bounceBall(previousHeight: Float, newHeightPercent: Float, minHeight: Float): Float? {
+    val newHeight = previousHeight * newHeightPercent
+    return if (newHeight >= minHeight) newHeight else null
 }
 ```
 
-### exer_3 — Sequência de Ressaltos
-O enunciado pedia simular ressaltos de bola usando `generateSequence`. A filtragem dos ressaltos abaixo de 1 metro foi feita dentro de `bounceBall` retornando `null`, o que termina a sequência automaticamente. O `.filter` explícito pedido no enunciado não foi usado — é uma limitação desta implementação. O `.take(15)` limita o output aos primeiros 15 ressaltos.
-
-### exer_vl — Biblioteca OOP
-O enunciado pedia uma hierarquia de classes com herança, getters/setters e companion object. A maior dificuldade foi o setter de `availableCopies`: ao tentar escrever `availableCopies = value` dentro do setter, o compilador assinalava um aviso. Consultei a documentação e percebi que dentro de um setter se deve usar `field` para referenciar o backing field:
-
+Após consultar melhor a documentação do Kotlin, percebeu-se que `takeIf` permite condensar esta lógica diretamente no lambda do `generateSequence`, eliminando a função auxiliar por completo:
 ```kotlin
-var availableCopies: Int = availableCopiesGetter
-    set(value) {
-        if (value >= 0) field = value
-    }
+val bounces = generateSequence(currentHeight) { previousHeight ->
+    (previousHeight * newHeightPercent).takeIf { it >= minHeight }
+}
 ```
 
-O `toString()` foi implementado na classe mãe `Book`, pois as subclasses partilham a mesma estrutura base. A informação específica de cada tipo de livro foi isolada em `getStorageInfo()`, que é `abstract` e obrigatoriamente implementada pelas subclasses.
+Esta abordagem é mais idiomática em Kotlin e reduz significativamente a verbosidade do código sem perder clareza.
 
-O enunciado pedia também uma `data class` `LibraryMember`. Usei `data class` porque o Kotlin gera automaticamente `equals()`, `hashCode()` e `copy()`, o que é adequado para um objeto que representa apenas dados sem comportamento próprio. A lista `borrowedBooks` armazena títulos em vez de referências a objetos `Book` para evitar dependências desnecessárias:
+### Exercício VL — Virtual Library
 
-```kotlin
-data class LibraryMember(
-    val name: String,
-    val membershipId: Int,
-    val borrowedBooks: MutableList<String> = mutableListOf()
-)
+A hierarquia de classes foi desenhada da seguinte forma:
+```
+Book (abstract)
+├── DigitalBook
+└── PhysicalBook
 ```
 
-`LibraryMember` foi declarada mas não integrada no sistema de empréstimos da `Library` — ficou como melhoria futura.
+Algumas decisões de design merecem destaque:
+
+- **`publicationYear` como propriedade calculada vs. getter:** Em Kotlin não é possível alterar o tipo de retorno num getter relativamente à propriedade base. Por isso, `publicationYear` foi declarado como uma propriedade regular com valor atribuído no `init`, em vez de tentar usar um getter com tipo diferente.
+
+- **Aviso de "out of stock" em `decreaseAvailableCopies()`:** O aviso de stock esgotado foi colocado no método `decreaseAvailableCopies()` e não no `setter` de `availableCopies`. Esta separação mantém o setter focado na validação de dados (garantir que o valor não é negativo), enquanto a lógica de negócio — neste caso, avisar que o livro ficou sem cópias — pertence ao método que executa a ação.
+
+- **`toString()` na classe base com `getStorageInfo()` abstrato nas subclasses:** Em vez de fazer override de `toString()` em cada subclasse (como o enunciado sugeria), optou-se por implementar `toString()` apenas em `Book`, delegando a parte específica de cada tipo para o método abstrato `getStorageInfo()`. Esta abordagem evita duplicação de código e é mais alinhada com os princípios de reutilização, ainda que tecnicamente o enunciado pedisse o override em cada subclasse.
 
 ---
 
-## 5. Testing and Validation
+## 4. Implementação
 
-Os testes foram feitos manualmente correndo cada `main()` e verificando o output. Para o **exer_2**, testei casos de erro (input não numérico, operador inválido, divisão por zero) para garantir que os loops de validação funcionavam corretamente. Para o **exer_vl**, testei `borrowBook` com mais pedidos do que cópias disponíveis e `returnBook` após esgotar o stock.
+### Exercício 1
+
+Os três métodos estão implementados no `main()` do package `dam.exer_1`. A utilização de `replace()` em string templates foi explorada para formatar a saída.
+
+### Exercício 2
+
+As operações estão separadas em funções top-level (`sum`, `subtract`, `multiply`, `divide`, `or`, `and`, `not`, `shiftLeft`, `shiftRight`). A função `divideCheck()` lança uma `IllegalArgumentException` quando o divisor é zero, e o bloco `try/catch` na função principal trata essa situação.
+
+O operador `!` (not) é o único unário, pelo que o fluxo de execução termina antes de pedir o segundo operando quando este operador é selecionado.
+
+### Exercício 3
+
+A lógica é compacta e está toda contida no `main()`. A altura inicial é 100f, o fator de ressalto é 60%, a altura mínima é 1f, e são mostrados no máximo os primeiros 15 ressaltos. A formatação da saída usa `"%.2f".format(bounce)` para apresentar duas casas decimais.
+
+### Exercício VL
+
+As classes implementadas são:
+
+| Classe | Tipo | Descrição |
+|---|---|---|
+| `Book` | `abstract class` | Classe base com propriedades comuns e métodos de empréstimo |
+| `DigitalBook` | `class` | Extensão com `fileSize` e `format` |
+| `PhysicalBook` | `class` | Extensão com `weight` e `hasHardcover` |
+| `Library` | `class` | Gere a lista de livros com operações de pesquisa e empréstimo |
+| `LibraryMember` | `data class` | Representa um membro com lista de livros emprestados |
+
+O `companion object` na classe `Library` mantém o contador estático `totalBooks` partilhado entre todas as instâncias.
 
 ---
 
-## 6. Usage Instructions
+## 5. Testes e Validação
 
-1. Abrir o projeto no IntelliJ IDEA.
-2. Navegar até ao package do exercício pretendido (ex: `org.example.dam.exer_2`).
-3. Executar a função `main()` do ficheiro correspondente.
-4. Para o **exer_2**, seguir as instruções no terminal (introduzir números e operadores quando pedido; escrever `sair` para terminar).
+Os testes foram realizados manualmente através da execução direta de cada `main()`. Foram validados os seguintes cenários:
+
+- **Exercício 1:** Verificação visual de que os 50 quadrados perfeitos estão corretos (1, 4, 9, ..., 2500) nos três métodos.
+- **Exercício 2:** Testes com inputs inválidos (texto em vez de número, operadores não permitidos), divisão por zero, e todas as operações disponíveis.
+- **Exercício 3:** Verificação de que a sequência termina corretamente quando a altura desce abaixo de 1f, e que o limite de 15 ressaltos é respeitado.
+- **Exercício VL:** Validação do empréstimo quando não há cópias disponíveis, devolução de livros, pesquisa por autor, e aviso de out of stock.
+
+---
+
+## 6. Instruções de Utilização
+
+### Pré-requisitos
+
+- JDK 17 ou superior
+- Maven 3.8+
+- IntelliJ IDEA (recomendado)
+
+### Executar o projeto
+
+Clonar o repositório:
+```bash
+git clone https://github.com/GameDevRafael/DAM_TP1
+cd DAM_TP1
+```
+
+Compilar com Maven:
+```bash
+mvn compile
+```
+
+Para executar cada exercício, navegar até ao respetivo `main()` no IntelliJ e usar o botão de execução, ou configurar o `exec-maven-plugin` com a classe principal desejada.
+
+### Estrutura de packages
+```
+src/main/kotlin/org/example/dam/
+├── exer_1/        # Arrays de quadrados perfeitos
+├── exer_2/        # Calculadora interativa
+├── exer_3/        # Bounce heights com generateSequence
+└── exer_vl/       # Virtual Library
+    ├── Book.kt
+    ├── DigitalBook.kt
+    ├── PhysicalBook.kt
+    ├── Library.kt
+    ├── LibraryMember.kt
+    └── Main.kt
+```
+
+---
+
+# Autonomous Software Engineering Sections
+
+> As secções 7 a 11 não se aplicam a este trabalho. Todo o código foi desenvolvido com **[AC NO, AI NO]**, pelo que não houve recurso a ferramentas de geração de código por IA. A IA foi utilizada apenas na redação do relatório (ver secção 15).
 
 ---
 
@@ -119,27 +177,37 @@ Os testes foram feitos manualmente correndo cada `main()` e verificando o output
 
 ## 12. Version Control and Commit History
 
-O repositório foi gerido com Git através do IntelliJ IDEA. Os commits foram organizados por exercício, fazendo commit após cada exercício estar funcional e testado. O repositório está disponível em: `https://github.com/GameDevRafael/DAM_TP1`
+O repositório está disponível em: [https://github.com/GameDevRafael/DAM_TP1](https://github.com/GameDevRafael/DAM_TP1)
+
+Os commits foram feitos de forma incremental, por exercício, de modo a refletir a progressão do desenvolvimento. Cada commit corresponde tipicamente à conclusão ou refinamento de um exercício específico.
 
 ---
 
 ## 13. Difficulties and Lessons Learned
 
-- **Índices em lambdas (exer_1):** Perceber que `IntArray` começa em índice 0 e que `it` vs `i` depende de se declaramos ou não uma variável lambda explícita.
-- **Backing field (exer_vl):** O uso de `field` dentro de um setter foi uma descoberta importante — sem ele, o setter entraria em recursão infinita.
-- **`generateSequence` com null (exer_3):** Compreender que retornar `null` num lambda de `generateSequence` é a forma idiomática de terminar a sequência em Kotlin.
-- **`!!` vs `?.` (exer_2):** Aprendi a diferença entre o operador `!!` (força não-nulo, lança exceção se nulo) e `?.` (safe call). Usei `!!` nos pontos onde a validação anterior já garantia que o valor não era nulo.
+- **`field` vs `this.property` nos setters:** Dentro de um setter, tentar atribuir valor usando `this.availableCopies = value` gerava um aviso de redundância. A solução correta em Kotlin é usar `field = value`, que referencia o backing field da propriedade.
+
+- **Refatoração do Exercício 3:** A implementação inicial usava uma função auxiliar `bounceBall()` separada para tratar a terminação da sequência. Após rever a documentação, percebeu-se que `takeIf` resolve o mesmo problema de forma muito mais concisa diretamente no lambda do `generateSequence`, dispensando a função auxiliar e tornando o código mais idiomático em Kotlin.
+
+- **Hierarquia de classes e `toString()`:** Compreender quando faz sentido centralizar lógica na classe base em vez de repetir código nas subclasses foi um exercício útil de design orientado a objetos.
+
+- **Nullable types e o operador `?`:** O uso de `Book?` na `Library` foi necessário para inicializar a variável como `null` antes do ciclo de pesquisa. Sem o `?`, o compilador não permite atribuição posterior de `null`.
 
 ---
 
 ## 14. Future Improvements
 
-- **exer_2:** Adicionar histórico de operações e suporte a expressões compostas (ex: `3 + 4 * 2`).
-- **exer_vl:** Implementar persistência (guardar a biblioteca em ficheiro JSON), associar `LibraryMember` ao sistema de empréstimos, e adicionar pesquisa por era ou ano.
-- **exer_3:** Usar `.filter` explicitamente como pedido no enunciado e tornar os parâmetros configuráveis via input.
+- **Exercício 2:** Adicionar suporte a expressões encadeadas (e.g., `3 + 4 * 2`) em vez de apenas operações binárias simples.
+- **Exercício VL:** Implementar pesquisa por título além de por autor, e associar os livros emprestados diretamente aos membros da `LibraryMember`.
+- **Exercício VL:** Persistência dos dados em ficheiro, para que o estado da biblioteca não se perca ao terminar a execução.
+- **Geral:** Adicionar testes unitários com JUnit para cobrir os casos de borda de forma automatizada.
 
 ---
 
 ## 15. AI Usage Disclosure
 
-O assistente de IA (Claude, da Anthropic) foi utilizado para gerar a estrutura e o texto deste README com base no código fornecido, nos comentários presentes no código e nas instruções do estudante. Todo o código dos exercícios foi escrito pelo estudante. A IA não foi usada para resolver os exercícios nem para escrever código — apenas para apoio na documentação escrita.
+**Código: [AC NO, AI NO]**  
+Todo o código foi desenvolvido inteiramente pelo aluno sem recurso a ferramentas de autocomplete assistido por IA nem a ferramentas de geração de código por inteligência artificial. Todo o código e comentários foram produzidos manualmente.
+
+**Relatório: [AC YES, AI YES]**  
+A redação e estruturação deste relatório foi assistida pelo modelo **Claude (Anthropic)**. O aluno é totalmente responsável pelo conteúdo apresentado e confirma que o mesmo reflete com rigor o trabalho desenvolvido.
