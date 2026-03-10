@@ -1,4 +1,4 @@
-# Tutorial 1 — Hello Kotlin. Hello Android World!
+# Assignment 1 — Kotlin
 
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
@@ -9,7 +9,7 @@
 
 ## 1. Introdução
 
-Este relatório descreve o desenvolvimento do Tutorial 1 da unidade curricular de Desenvolvimento de Aplicações Móveis (DAM) do ISEL. O objetivo principal deste trabalho foi ganhar familiaridade com a linguagem Kotlin, explorando as suas funcionalidades básicas e intermédias num contexto prático, antes de avançar para o desenvolvimento Android propriamente dito.
+Este relatório descreve o desenvolvimento dos exercícios de Kotlin da unidade curricular de Desenvolvimento de Aplicações Móveis (DAM) do ISEL. O objetivo principal deste trabalho foi ganhar familiaridade com a linguagem Kotlin, explorando as suas funcionalidades básicas e intermédias num contexto prático, antes de avançar para o desenvolvimento Android propriamente dito.
 
 O projeto foi desenvolvido como uma aplicação Kotlin/Maven organizada em quatro packages independentes, cada um focado num tema ou conjunto de conceitos específicos: arrays e funções, calculadoras com tratamento de exceções, sequências funcionais e modelação orientada a objetos.
 
