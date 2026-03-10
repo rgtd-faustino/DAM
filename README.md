@@ -1,4 +1,4 @@
-# Assignment 3 — Hello World V2
+# Assignment 3 — Hello World Android App
 
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
