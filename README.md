@@ -1,91 +1,297 @@
-# Assignment 1 — Investment Calculator (Hello World)
-Course: Desenvolvimento de Aplicações Móveis (DAM)
-Student(s): A51394 Rafael Faustino
-Date: 2026
-Repository URL: https://github.com/GameDevRafael/DAM_TP1
+# Assignment 3 — Hello World V2
 
-## 1. Introduction
-O que era pedido no enunciado: Desenvolver a primeira aplicação Android base da cadeira que vai além do típico "Hello World" num ecrã vazio. O projeto requeria que fossem construídas vistas diferentes para duas orientações (Portrait e Landscape), utilizando interações entre botões, inputs, notificações dinâmicas (Toast) e exploração das saídas de depuração e filtragem através de LogCat (ADB). As diferentes lógicas da App são concentradas com as "Views" centrais da paleta Android no desenvolvimento da App ("Investment Calculator").
+**Course:** Desenvolvimento de Aplicações Móveis (DAM)  
+**Student:** A51394 Rafael Faustino  
+**Date:** 10/03/2026  
+**Repository URL:** https://github.com/GameDevRafael/DAM_TP1_HelloWorld
 
-## 2. System Overview
-A aplicação permite calcular o rendimento acumulado de um certo montante inserido ao longo de vários anos, sujeito a taxas de juro fixas e comparativas de diferentes ativos financeiros previstos:
-- **Obrigações**: rendimento de 3,5% ao ano.
-- **Ações**: rendimento de 8,0% ao ano.
+---
 
-Quando o utilizador pressiona "Calcular", o lucro individual e a variação da percentagem são apresentados com formatação financeira (€). Além do mais, a aplicação prevê a monitorização constante de um Portfolio simulado de Ações reais que, através da interface, mostra o saldo através de uma notificação emergente no ecrã e grava localmente o histórico discriminado em Logs para posterior auditoria via ADB.
+## 1. Introdução
 
-## 3. Architecture and Design
-A aplicação é suportada pela lógica central controlada na `MainActivity.kt`.
-No que diz respeito ao seu front-end (vistas):
-- Utiliza os esquemas nativos XML base do Android, bifurcando o ecrã normal num layout Portrait (`activity_main.xml`).
-- Utiliza um ecrã dedicado alternativo Landscape (`layout-land/activity_main.xml`) com as ferramentas e opções da calculadora (onde as vistas e caixas têm propriedades distintas ativas). As validações e escutas em Kotlin determinam quais dos elementos das orientações estão disponíveis na UI daquele instante do ciclo. 
+Este exercício corresponde à secção 4.2 do Tutorial 1 de DAM e constitui a evolução directa do Hello World V1. Enquanto a versão anterior se limitava a apresentar uma mensagem de texto estática, a versão 2 introduz uma interface mais rica, com múltiplos componentes visuais e uma organização de layout baseada em `ConstraintLayout`.
 
-## 4. Implementation
+O exercício 4.2 serviu de base para consolidar conhecimentos sobre posicionamento de vistas através de constraints, utilização de recursos tipados em `strings.xml`, integração de imagens com `ImageView` e incorporação de um `CalendarView`. Paralelamente, a aplicação foi expandida no modo landscape com uma interface temática de dashboard financeira, demonstrando como o Android permite layouts completamente distintos por orientação.
 
-Nesta secção sublinho os processos de reflexão para colmatar necessidades de UI e lógicas implementadas ao longo do Exercício:
+## 2. Visão Geral do Sistema
 
-### Definição do Root View Edge-to-Edge
-Logo no processo de design deparei-me com uma dificuldade trazida pelo motor moderno base que tenta ligar às barras do sistema (bateria / menu inferior). A biblioteca estava a procurar identificar a base do modelo através de `findViewById(R.id.main)` mas recebia erro e não encontrava nenhum elemento com o nome main.
-* **Solução**: Atribuí manualmente o identificador explícito `android:id="@+id/main"` diretamente no contentor raiz nativo (LinearLayout/Constraint) de cada XML para resolver o conflito.
+### Modo Portrait
 
-### Listener de Tipologia e Juro (Radio Buttons)
-Para transitar as taxas visualmente e registá-las para os cálculos, criei `setOnCheckedChangeListener` onde ao alternar entre "Ações" ou "Obrigações", uma label interativa apresenta a taxa equivalente (ex.: "8,0% / ano").
+O layout portrait (`res/layout/activity_main.xml`) apresenta quatro componentes dispostos verticalmente:
 
-### Transição entre Strings e Números nas Caixas de Texto (EditText)
-Os inputs na app embora aceitem visualmente só números são devolvidos sempre em formato `String` nativo do Java/Kotlin.
-Para isto tive de criar tratamentos e passagens de tipo nos botões usando as ferramentas standard como `toDoubleOrNull()` e `toIntOrNull()` que também protegem de inputs defeituosos.
-Estando vazio, devolvo a quem me usa na etiqueta "Valores inválidos!", informando do que falha.
-* *Solução Notável/Labels:* Ao detetar que os valores eram inválidos (nulos) dentro do momento do Clique (`Listener`), um `return` base levava o bloco a querer sair prematuramente do próprio `onCreate()`, finalizando as chamadas. Descobri como os Labeled Returns mitigavam isso na pesquisa à documentação, trocando para: **`return@setOnClickListener`**  e apenas saindo dessa "verificação de segurança".
+| Componente | ID | Descrição |
+|---|---|---|
+| `TextView` | `textView6` | Cabeçalho roxo com o nome da aplicação ("Hello Word V2") em 34sp |
+| `TextView` | `textView` | Saudação "Hello Android World!" em verde, 30sp, negrito |
+| `FrameLayout` + `ImageView` | `frameLayout` / `imageView` | Contém um emoji facial (`emoji.jpg`) carregado via `srcCompat` |
+| `TextView` | `textView3` | Barra verde com o texto "My First App" em 20sp |
+| `CalendarView` | `calendarView` | Calendário nativo do Android posicionado abaixo dos componentes anteriores |
 
-### Prevenir Crashes entre Modos do Ecrã (Guardas Nulas)
-Percebi que desenhando os botões só pro-layout (`Landscape`), se os testasse na orientação em Pé (`Portrait`), os IDs como `editAnos` que o código instanciou à força viajavam como nulos, fazendo com que aplicar propriedades de cliques originasse grandes erros impeditivos de execução, e fechos em loop pela JVM.
-**A minha linha de pensamento**: Para a `MainActivity` entender, passei uma instrução `if (view == null)` validando interblocos antes sequer de assinar eventos. Assim tudo rola lisamente face às ausências.
+### Modo Landscape
 
-### Cálculo Nativo de Potência (Anotações do IDE e Math)
-Houve uma oportunidade para evoluir face a código Java padrão. Na fórmula base `x * Math.pow(...)` para o juro composto, entendi (guiado por auto-completes na ferramenta e documentação) que usar as features embutidas de Double era o core syntax, originando então `(1 + taxa).pow(anos.toDouble())`. 
+O layout landscape (`res/layout-land/activity_main.xml`) é uma interface temática completamente diferente — uma **Bíblia Financeira** — dividida em três colunas com `LinearLayout` horizontal e peso igual (`layout_weight="1"`):
 
-### Strings e Formatação (€ e Percentagens)
-No tratamento textual, li as opções standard para imprimir os formatos monetários sem perdas numéricas longas ("ex: 10.334311..."). Cheguei à combinação base format() recorrendo a literais escapados `%` e restrições de formatações decimais (`%.2f`)
-Exemplo:
-```kotlin
-// Limitacao para duas casas decimais no numero total final, terminando o simbolo de divisa.
-textLucro.text = "Total: %.2f€ (+%.1f%%)".format(total, percentagem) 
+- **Coluna esquerda:** Portfólio com cinco activos (VWCE, TTWO, NVDA, BTC, Gold), valores actuais e variações percentuais com código de cor (verde `#00ffb3` para positivo, vermelho `#ff4d6d` para negativo)
+- **Coluna central:** Histórico de transações com datas, tipo de operação (COMPRA/VENDA) e activo transaccionado; botão "VER PORTFÓLIO"
+- **Coluna direita:** Calculadora de lucro com juros compostos, dois RadioButtons (Obrigações 3,5% / Ações 8,0%), campos de capital e anos, e botão "CALCULAR"
+
+## 3. Arquitetura e Design
+
+### Estrutura do Projeto
+
 ```
-A nota do "scape" `%%` é essencial porque diz ao processador formatação para imprimir esse mesmo símbolo cru em vez de iniciar um pedido de "Placeholder param" para as conversões string/number.
+app/src/main/
+├── java/dam_a51394/helloworld/
+│   └── MainActivity.kt          # Lógica da actividade
+├── res/
+│   ├── drawable/
+│   │   └── emoji.jpg            # Imagem do emoji
+│   ├── font/
+│   │   └── syne.xml             # Fonte personalizada (landscape)
+│   ├── layout/
+│   │   └── activity_main.xml    # Layout portrait (exercício 4.2)
+│   ├── layout-land/
+│   │   └── activity_main.xml    # Layout landscape (dashboard financeira)
+│   └── values/
+│       ├── strings.xml          # Todos os textos da aplicação
+│       ├── themes.xml           # Tema Material3 DayNight NoActionBar
+│       └── colors.xml
+```
 
-### Logcat ADB + Toasts
-Com base no pedido do enunciado para fazer com que os logs filtrassem um Portfolio fictício interativo, agrupei chamadas `Log.i()` estendidas aos tickets e ativadas na UI por Botão de evento num Toast. Quando inspecionados num PC hospedeiro com `adb logcat -s Portfolio:I` devolve todos os dados corretamente isolados no output.
+**Ícone da aplicação:**  
+O ícone foi personalizado para reflectir a temática financeira da aplicação. Representa um livro com um gráfico de barras ascendente e uma seta de crescimento, simbolizando investimentos e valorização de ativos.
 
-## 5. Testing and Validation
-Procedi a testes de usabilidade e fronteira na App:
-- Simulei conversões de cliques com dados em branco garantindo que a aplicação avisa gentilmente "Valores Inálidos" e não dispara *Exceções Nuas de Formatos Numéricos*.
-- Comparei resultados de matemática para lucro gerado testando na APP Ações + Capital, contra saídas calculadas das minhas mãos com os mesmos parâmetros simulados. 
-- Viragem do Telemóvel/Máquina virtual validando que o telemóvel retira do loop de cálculo em Portrait de forma natural graças aos verificadores lógicos de NullPointer Exceptions descritos no Raciocínio (Guardas nulas de IF)
-- Verificação cruzada do Toast com logs de info subjacentes nos Debugging tools integrados.
+### Decisões de Design
 
-## 6. Usage Instructions
-1. Abra e instale a aplicação. Verifique a saudação e vire o Dispositivo à diagonal / Paisagem para iniciar controlos.
-2. Escreva o "Capital" nas respetivas caixinhas limadas a dígitos e de seguida "Anos" do investimento tido em conta.
-3. Escolha se prefere basear as contas comparativas no Juro Fixo de "Ações" (8%) ou "Obrigações" (3.5%). Verifique se o indicador varia automaticamente.
-4. Carregue no Botão Geral Calcular; o Ecrã mostrará detalhadamente retornos com sinal "+" ou o detalhe absoluto entre juros compostos.
-5. Em paralelo existe o Menu portfólio. Clique uma vez para ler no Sistema um total apurado imediato, e caso ligado a depurador (Cabo PC Android -> ADB) filtrar localmente todas as ações independentes em Log.I 
+**Portrait — ConstraintLayout com hierarquia top-to-bottom:**  
+Cada componente é posicionado relativamente ao anterior através de `layout_constraintTop_toBottomOf`, criando uma cadeia vertical. O `textView6` ancora-se ao topo do ecrã (`constraintTop_toTopOf="parent"`), e os restantes componentes descem em cascata. Esta abordagem mantém o posicionamento estável independentemente do tamanho do ecrã.
+
+O `FrameLayout` foi utilizado como contentor para o `ImageView` para garantir controlo preciso das dimensões (312×92dp) sem depender do conteúdo da imagem. O `ImageView` preenche o `FrameLayout` com `match_parent` em ambas as dimensões.
+
+**Landscape — LinearLayout horizontal com três ConstraintLayouts:**  
+A divisão em três colunas de peso igual simplifica a distribuição do espaço disponível em modo landscape. Cada coluna é um `ConstraintLayout` independente, o que permite posicionamento flexível dentro de cada secção sem interferir com as restantes.
+
+A paleta de cores do landscape (`#121221` como fundo, `#00ffb3` para valores positivos, `#ff4d6d` para negativos) foi escolhida para simular o aspecto de uma aplicação financeira real. A fonte `Syne` confere consistência tipográfica a toda a secção landscape.
+
+**Gestão de strings:**  
+Todos os textos visíveis, incluindo valores numéricos estáticos (e.g. `_1_250`, `_615_13`), foram declarados em `strings.xml`. Esta decisão segue as boas práticas Android e facilita eventual localização futura, embora alguns identificadores numéricos sejam pouco descritivos — aspecto reconhecido como área de melhoria.
+
+## 4. Implementação
+
+### Layout Portrait — Componentes Principais
+
+**Cabeçalho com fundo colorido:**
+```xml
+<TextView
+    android:id="@+id/textView6"
+    android:layout_width="0dp"
+    android:layout_height="80dp"
+    android:background="#673AB7"
+    android:text="@string/app_name"
+    android:textColor="#FFFFFF"
+    android:textSize="34sp"
+    android:textStyle="bold"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+```
+
+A largura `0dp` em combinação com `constraintStart` e `constraintEnd` ancorados ao `parent` faz com que o `TextView` ocupe toda a largura disponível — padrão comum para elementos de cabeçalho em `ConstraintLayout`.
+
+**ImageView dentro de FrameLayout:**
+```xml
+<FrameLayout
+    android:id="@+id/frameLayout"
+    android:layout_width="312dp"
+    android:layout_height="92dp"
+    app:layout_constraintTop_toBottomOf="@+id/textView3">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/face_emoji"
+        app:srcCompat="@drawable/emoji" />
+</FrameLayout>
+```
+
+O atributo `contentDescription` foi preenchido com referência a `strings.xml`, cumprindo os requisitos de acessibilidade Android. O atributo `srcCompat` (em vez de `src`) garante compatibilidade com versões anteriores do Android através da biblioteca AppCompat.
+
+**CalendarView:**
+```xml
+<CalendarView
+    android:id="@+id/calendarView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="31dp"
+    android:layout_marginTop="28dp"
+    android:layout_marginEnd="31dp"
+    app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
+```
+
+O `CalendarView` foi colocado no final da hierarquia vertical, ancorado à base do `FrameLayout`. As margens laterais de 31dp proporcionam espaçamento visual adequado. O `CalendarView` não tem lógica de selecção implementada — funciona como componente visual estático nesta fase do exercício.
+
+### Lógica da Calculadora (MainActivity.kt)
+
+A `MainActivity` detecta o modo de orientação verificando a existência dos componentes do landscape antes de registar listeners, evitando `NullPointerException` em portrait:
+
+```kotlin
+if (editCapital == null || editAnos == null || ...)
+    return
+```
+
+O cálculo de juros compostos aplica a fórmula `M = C × (1 + i)^n`:
+
+```kotlin
+val total = capital * (1 + taxa).pow(anos.toDouble())
+val lucro = total - capital
+val percentagem = (lucro / capital) * 100
+
+textResultado.text = "+%.2f€".format(lucro)
+textLucro.text = "Total: %.2f€ (+%.1f%%)".format(total, percentagem)
+```
+
+A formatação `%%` no template de string produz um único `%` literal — necessário porque `format()` interpreta `%` como marcador de substituição.
+
+Os `RadioButton` actualizam dinamicamente o `TextView` de taxa ao mudar de seleção:
+
+```kotlin
+radioObrigacoes.setOnCheckedChangeListener { _, isChecked ->
+    if (isChecked) textTaxa.text = "3,5% / ano"
+}
+radioAcoes.setOnCheckedChangeListener { _, isChecked ->
+    if (isChecked) textTaxa.text = "8,0% / ano"
+}
+```
+
+O botão "VER PORTFÓLIO" exibe um `Toast` com o total do portfólio. Durante o desenvolvimento verificou-se que o segundo `setOnClickListener` do mesmo botão substitui o primeiro — o listener de `Log.i` ficou assim inactivo, sendo substituído pelo `Toast`.
+
+### Ciclo de Vida e Edge-to-Edge
+
+A aplicação utiliza `enableEdgeToEdge()` e aplica `WindowInsetsCompat` para gerir o padding em dispositivos com barras de sistema, garantindo que o conteúdo não fica obstruído pela barra de estado ou de navegação.
+
+O comentário no código documenta uma dificuldade encontrada com o `ViewCompat.setOnApplyWindowInsetsListener`: o elemento raiz necessitou do `id="main"` para que o sistema conseguisse localizar a vista-raiz — problema que ocorre quando o layout raiz não tem ID explícito e o sistema não encontra nenhuma vista com esse nome.
+
+## 5. Testes e Validação
+
+### Validação em Emulador
+
+A aplicação foi testada em emulador Android com validação das duas orientações:
+
+**Portrait:**
+- Todos os componentes visuais (cabeçalho roxo, texto verde, emoji, barra verde, calendário) renderizam correctamente
+- O `CalendarView` exibe o mês actual por omissão
+- O `enableEdgeToEdge()` garante que o cabeçalho não fica encoberto pela barra de estado do sistema
+
+**Landscape:**
+- A transição de orientação carrega o layout alternativo em `layout-land/`
+- As três colunas dividem o ecrã com peso igual
+- A calculadora produz resultados correctos; testado com capital=1000€, anos=10, Ações (8%) → resultado de aproximadamente +1.158,93€ de lucro
+- A validação de campos vazios (capital ou anos nulos) retorna "Valores inválidos" sem crash
+- O `Toast` do portfólio apresenta-se no ecrã por tempo curto (`LENGTH_SHORT`)
+
+### Verificação de Constraints
+
+Os constraints do portrait foram verificados manualmente no editor visual do Android Studio. O `horizontal_bias` de alguns componentes landscape foi ajustado iterativamente para obter o alinhamento visual pretendido — processo típico quando se trabalha com posicionamento preciso em `ConstraintLayout`.
+
+## 6. Instruções de Utilização
+
+### Pré-requisitos
+
+- Android Studio (versão Hedgehog ou superior recomendada)
+- SDK Android API 24 ou superior
+- Kotlin 1.9+
+
+### Clonar e Configurar
+
+```bash
+git clone https://github.com/GameDevRafael/DAM_TP1_HelloWorld.git
+cd DAM_TP1_HelloWorld
+```
+
+1. Abrir o Android Studio
+2. Seleccionar **File → Open** e navegar até à pasta do projecto
+3. Aguardar a sincronização do Gradle (`Build → Sync Project with Gradle Files`)
+4. Seleccionar um emulador ou dispositivo físico na barra de ferramentas
+5. Executar com **Run → Run 'app'** (ou `Shift+F10`)
+
+Para testar o modo landscape no emulador, rodar o dispositivo virtual com o botão de rotação na barra lateral do emulador.
+
+### Utilização do ADB (Android Debug Bridge)
+
+O ADB foi utilizado para interagir com o emulador durante o desenvolvimento. As ferramentas encontram-se em:
+```bash
+cd C:\Users\galve\AppData\Local\Android\Sdk\platform-tools
+```
+
+Comandos principais utilizados:
+```bash
+
+# Listar dispositivos conectados
+./adb devices
+
+# Monitorizar logs específicos em tempo real
+./adb logcat -s Portfolio
+./adb logcat -s Calcular
+
+# Capturar screenshot do emulador
+./adb shell screencap /sdcard/screenshot.png
+./adb pull /sdcard/screenshot.png C:\Users\galve\Desktop\screenshot.png
+
+# Verificar resolução do ecrã
+./adb shell wm size
+```
+
+---
 
 # Development Process
 
 ## 12. Version Control and Commit History
-*Foi usado como sublinhado o Gestor de controlo normal (Git/AS) na qual eu gravei os saltos lógicos com Commits incrementais partilhando em Repository as variações de Lógica e Refactorings (separatórias do modelo e de lógicas entre vistas).* — *A justificar dependendo dos commit tags que tenhas criado nas Push actions do repositório*
+
+O repositório segue uma estratégia de commits por funcionalidade concluída. Os commits principais cobrem: criação do projecto base, implementação do layout portrait (exercício 4.2), desenvolvimento do layout landscape com a dashboard financeira, e integração da lógica Kotlin na `MainActivity`.
+
+O repositório mantém uma única branch `main`, adequada para um projecto de dimensão individual com âmbito académico.
 
 ## 13. Difficulties and Lessons Learned
-- **A gestão nula das Views nos Androids**: Achei bastante crucial os erros de dependência. Ao contrário de uma Webpage, um ecrã na orientação que não exibe aquela tag vai atirar uma exceção pesada ao Kotlin ao ser associado. Aprender Guardas (`if x == null return`) mitigou o cenário mas aumentou as lições sobre os Activity Lifecycles.
-- **Tipagem Dinâmica entre EditBox -> String -> Double**: Relembrei as falhas nos tipos estáticos e utilizei abordagens mais limpas da JVM. A capacidade de um auto-fallback, como o método `toDoubleOrNull()` revelaram ser ferramentas excecionais para proteção face a inputs indesejados sem usar complexas "try/catches".
-- **Diferença Clara de Returns em Escadas de Eventos**: Compreender a profundidade de eventos. Sair do evento Click através do `return` fechava a Class inteira de Init. Aprendi (através de referências cruzadas sobre Labeled Returns da Google Docs) a devolver apenas retorno local à `onClickListener()`.
+
+**Fontes personalizadas no Android:**
+A tentativa de utilizar a fonte `Syne` directamente no campo `fontFamily` falhou com o erro
+`Cannot resolve symbol: 'syne'`. O Android não reconhece fontes externas sem as importar
+explicitamente. A solução foi aceder a **More Fonts** no editor de atributos, que faz o
+download e configura automaticamente a pasta `res/font/`.
+
+**Layouts e posicionamento livre:**
+A primeira tentativa de posicionamento utilizou `FrameLayout`, que não é adequado para
+dividir o ecrã — serve para sobrepor elementos. Para dividir o ecrã em colunas a solução
+correcta é um `LinearLayout` horizontal com `layout_weight="1"` em cada filho. Dentro de
+cada coluna foi utilizado `ConstraintLayout` para posicionamento livre dos elementos.
+
+**O atributo `layout_weight` exige `layout_width="0dp"`:**
+Ao utilizar `layout_weight` num `LinearLayout` horizontal, o `layout_width` de cada filho
+tem de ser `0dp` — sem isso o peso é ignorado e as colunas não dividem o espaço correctamente.
+
+**ID obrigatório na vista raiz do layout landscape:**
+O `ViewCompat.setOnApplyWindowInsetsListener` procura a vista raiz pelo `id="main"`.
+O layout landscape não tinha esse ID definido, causando `NullPointerException` na linha 20
+do `onCreate`. A solução foi adicionar `android:id="@+id/main"` ao `ConstraintLayout` raiz
+do ficheiro `layout-land/activity_main.xml`.
+
 
 ## 14. Future Improvements
-- Passar os controláveis ("Valores de Avisos e Retornos numéricos") que estão "HardCoded/fixos" em ficheiros puros Java/Kotlin e transladá-los ordenadamente para ficheiro centralizado da Linguagens na APP como dita a boa forma : _`strings.xml`_.
-- Adicionar uma salvaguarda (Através do override do método nativo `onSaveInstanceState`). Atualmente as variáveis inseridas de "Anos e Cap" seriam efémeras com qualquer rotação/reset do Landscape se ativadas bruscamente (Uma vez que a view é redesenhada). Seria implementado suporte a `Bundle` States no futuro onde isso seja mais central. 
-- Criar funções utilitárias unidas como o Botão de Portfolio mas acoplados ao tráfego assíncrono (Networking e HTTPs API Restfuls) puxando cotação em tempo livre sem "Log" estático. 
+
+- **Persistência do CalendarView:** Implementar um listener `setOnDateChangeListener` no `CalendarView` para guardar e exibir a data seleccionada, tornando o componente interactivo.
+- **Toast vs. Log consolidado:** Unificar o listener do botão de portfólio para registar simultaneamente no Logcat e apresentar o `Toast`, eliminando a substituição de listeners.
+- **Calculadora com validação mais robusta:** Adicionar validação de valores negativos e zero no capital e nos anos, com feedback mais descritivo ao utilizador.
+- **Strings numéricas com nomenclatura descritiva:** Renomear os recursos de string com identificadores numéricos (e.g. `_615_13`) para nomes de domínio (e.g. `vwce_price`) para melhorar a legibilidade do código.
+- **Modo portrait expandido:** Integrar parte da funcionalidade da calculadora no portrait, aproveitando o espaço abaixo do `CalendarView`.
+- **Tema unificado:** Definir a paleta de cores do landscape no `colors.xml` e referenciá-la a partir de ambos os layouts, eliminando valores hexadecimais repetidos inline.
+
+---
 
 ## 15. AI Usage Disclosure
-Na realização deste primeiro grande módulo, a inteligência artificial teve propósitos isolados e delimitados de aprendizagem, sem substituição na arquitetura. Concretamente:
-- **Ferramentas de IDE (IntelliSense/Lint)**: Foram usados para recomendações dinâmicas de passagem nos métodos nativos de Java para Kotlin, exemplo, a passagem da library estática Math `Math.pow` para o facilitador orgânico de Double do próprio runtime Kotlin `.pow(...)`. 
-- **Assistência em Elaboração de Documentação**: Utilizei o assistente para compilar todos os meus fragmentos de conhecimento criados em comentários fonte da App em torno do projeto para redigir, formatar profissionalmente e alicerçar as secções deste ficheiro explicativo, respeitando a integridade das explicações exatas e originais que desenvolvi para o projeto submetido. Evidenciando uma escrita superior que comunica devidamente uma explicação limpa para um projeto académico sem adulterar o que codifiquei propriamente.
+
+**Código: [AC YES, AI NO]**  
+Todo o código foi desenvolvido inteiramente pelo aluno sem recurso a ferramentas de geração de código por inteligência artificial. Apenas o autocomplete nativo do Android Studio foi utilizado.
+
+**Relatório: [AC YES, AI YES]**  
+A redação e estruturação deste relatório foi assistida pelo modelo **Claude (Anthropic)**. O aluno é totalmente responsável pelo conteúdo apresentado e confirma que o mesmo reflete com rigor o trabalho desenvolvido.
