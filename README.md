@@ -2,8 +2,8 @@
 
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
-**Date:** 10/03/2026  
-**Repository URL:** [DAM_TP1](https://github.com/GameDevRafael/DAM_TP1)
+**Date:** 13/03/2026  
+**Repository URL:** [DAM_TP1](https://github.com/rgtd-faustino/DAM_TP1)
 
 ---
 
