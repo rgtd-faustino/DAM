@@ -78,7 +78,7 @@ Algumas decisões de design merecem destaque:
 
 - **`publicationYear` como propriedade calculada vs. getter:** Em Kotlin não é possível alterar o tipo de retorno num getter relativamente à propriedade base. Por isso, `publicationYear` foi declarado como uma propriedade regular com valor atribuído no `init`, em vez de tentar usar um getter com tipo diferente.
 
-- **Aviso de "out of stock" em `decreaseAvailableCopies()`:** O aviso de stock esgotado foi colocado no método `decreaseAvailableCopies()` e não no `setter` de `availableCopies`. Esta separação mantém o setter focado na validação de dados (garantir que o valor não é negativo), enquanto a lógica de negócio — neste caso, avisar que o livro ficou sem cópias — pertence ao método que executa a ação.
+- **Aviso de "out of stock" em `decreaseAvailableCopies()`:** O aviso de stock esgotado foi colocado no método `decreaseAvailableCopies()` e não no `setter` de `availableCopies`. Esta separação mantém o setter focado na validação de dados (garantir que o valor não é negativo), enquanto o aviso que o livro ficou sem cópias pertence ao método que executa a ação.
 
 - **`toString()` na classe base com `getStorageInfo()` abstrato nas subclasses:** Em vez de fazer override de `toString()` em cada subclasse (como o enunciado sugeria), optou-se por implementar `toString()` apenas em `Book`, delegando a parte específica de cada tipo para o método abstrato `getStorageInfo()`. Esta abordagem evita duplicação de código e é mais alinhada com os princípios de reutilização, ainda que tecnicamente o enunciado pedisse o override em cada subclasse.
 
@@ -92,9 +92,9 @@ Os três métodos estão implementados no `main()` do package `dam.exer_1`. A ut
 
 ### Exercício 2
 
-As operações estão separadas em funções top-level (`sum`, `subtract`, `multiply`, `divide`, `or`, `and`, `not`, `shiftLeft`, `shiftRight`). A função `divideCheck()` lança uma `IllegalArgumentException` quando o divisor é zero, e o bloco `try/catch` na função principal trata essa situação.
+As operações estão separadas em funções top-level, ou seja, fora da classe (`sum`, `subtract`, `multiply`, `divide`, `or`, `and`, `not`, `shiftLeft`, `shiftRight`). A função `divideCheck()` lança uma `IllegalArgumentException` quando o divisor é zero, e o bloco `try/catch` na função principal trata essa situação.
 
-O operador `!` (not) é o único unário, pelo que o fluxo de execução termina antes de pedir o segundo operando quando este operador é selecionado.
+O operador `!` (not) é o único unário (apenas requer um operando), pelo que o fluxo de execução termina antes de pedir o segundo operando quando este operador é selecionado.
 
 ### Exercício 3
 
@@ -200,7 +200,6 @@ Os commits foram feitos de forma incremental, por exercício, de modo a refletir
 - **Exercício 2:** Adicionar suporte a expressões encadeadas (e.g., `3 + 4 * 2`) em vez de apenas operações binárias simples.
 - **Exercício VL:** Implementar pesquisa por título além de por autor, e associar os livros emprestados diretamente aos membros da `LibraryMember`.
 - **Exercício VL:** Persistência dos dados em ficheiro, para que o estado da biblioteca não se perca ao terminar a execução.
-- **Geral:** Adicionar testes unitários com JUnit para cobrir os casos de borda de forma automatizada.
 
 ---
 
