@@ -177,8 +177,6 @@ src/main/kotlin/org/example/dam/
 
 ## 12. Version Control and Commit History
 
-O repositório está disponível em: [https://github.com/GameDevRafael/DAM_TP1](https://github.com/GameDevRafael/DAM_TP1)
-
 Os commits foram feitos de forma incremental, por exercício, de modo a refletir a progressão do desenvolvimento. Cada commit corresponde tipicamente à conclusão ou refinamento de um exercício específico.
 
 ---
