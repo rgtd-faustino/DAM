@@ -1,4 +1,4 @@
-# Assignment 2 — System Info App
+# Assignment 3 — System Info App
 
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
