@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.vaultguard.ui.login.LoginFragment"
+        android:label="Login">
+        <action
+            android:id="@+id/action_loginFragment_to_vaultFragment"
+            app:destination="@id/vaultFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/vaultFragment"
+        android:name="com.example.vaultguard.ui.vault.VaultFragment"
+        android:label="Vault">
+        <action
+            android:id="@+id/action_vaultFragment_to_entryDetailFragment"
+            app:destination="@id/entryDetailFragment" />
+        <action
+            android:id="@+id/action_vaultFragment_to_passwordGeneratorFragment"
+            app:destination="@id/passwordGeneratorFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/entryDetailFragment"
+        android:name="com.example.vaultguard.ui.entry.EntryDetailFragment"
+        android:label="Entry Detail" >
+        <argument
+            android:name="entryId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/passwordGeneratorFragment"
+        android:name="com.example.vaultguard.ui.generator.PasswordGeneratorFragment"
+        android:label="Generator" />
+</navigation>
