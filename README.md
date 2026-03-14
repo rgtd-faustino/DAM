@@ -2,18 +2,18 @@
 
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
-**Date:** 10/03/2026  
-**Repository URL:** https://github.com/GameDevRafael/DAM_TP1_SystemInfo
+**Date:** 14/03/2026  
+**Repository URL:** https://github.com/rgtd-faustino/DAM_TP1_SystemInfo
 
 ---
 
 ## 1. Introdução
 
-Esta aplicação foi desenvolvida como parte da secção 5.3 do Tutorial 1 da disciplina e representa o primeiro projeto Android com propósito funcional, depois do exercício inicial de Hello World. O objetivo é ler diretamente dados do dispositivo através da classe `android.os.Build` pertencente ao SDK do Android, e apresentar esses dados de forma legível num único ecrã. Não existem interações com o utilizador — trata-se de uma aplicação de visualização de informação de sistema.
+Esta aplicação foi desenvolvida como parte da secção 5.3 do Tutorial 1 da disciplina e representa o primeiro projeto Android com propósito funcional, depois do exercício inicial de Hello World. O objetivo é ler diretamente dados do dispositivo através da classe `android.os.Build` pertencente ao SDK do Android e apresentar esses dados de forma legível num único ecrã. Não existem interações com o utilizador, trata-se de uma aplicação de visualização de informação de sistema.
 
 ## 2. Visão Geral do Sistema
 
-A aplicação funciona num único ecrã e não requer permissões especiais além das predefinidas. Ao iniciar, acede à classe `android.os.Build` nativa do Android para recolher propriedades do dispositivo como a marca, modelo, nível de API, versão do sistema operativo, entre outras. Essa informação é formatada numa única string e apresentada num `TextView` multilinha centrado no ecrã.
+A aplicação funciona num único ecrã e não requer permissões especiais além das predefinidas. Ao iniciar, acede à classe `android.os.Build` nativa do Android para recolher propriedades do dispositivo como a marca, modelo, nível de API, versão do sistema operativo, entre outras. Essa informação é formatada numa única string e apresentada num `TextView` centrado no ecrã.
 
 ## 3. Arquitetura e Design
 
@@ -22,9 +22,9 @@ A estrutura de ficheiros segue o padrão gerado pelo Android Studio para um proj
 No layout definido em `activity_main.xml`, foi utilizado o `ConstraintLayout` como raiz, por ser o layout recomendado para posicionamento relativo de elementos. A interface é composta por três elementos principais:
 - Um `TextView` de título fixo no topo, com fundo verde (`#37B61B`);
 - Um `ImageView` com uma imagem de engrenagem ao centro, a representar o tema de configurações de sistema;
-- Um `TextView` multilinha abaixo, que recebe e apresenta os dados obtidos em tempo de execução.
+- Um `TextView` abaixo, que recebe e apresenta os dados obtidos em tempo de execução.
 
-A fonte `monospace` foi definida no `TextView` de resultados para melhorar a legibilidade dos dados crus de hardware e software, tirando partido do alinhamento natural das colunas que este tipo de letra proporciona.
+A fonte `monospace` foi definida no `TextView` de resultados para melhorar a legibilidade dos dados de hardware e software, tirando partido do alinhamento natural das colunas que este tipo de letra proporciona.
 
 ## 4. Implementação
 
@@ -59,7 +59,7 @@ Os testes foram realizados exclusivamente através do emulador disponibilizado p
 ## 6. Instruções de Utilização
 
 Para clonar e executar o projeto:
-1. Clonar o repositório: `git clone https://github.com/GameDevRafael/DAM_TP1_SystemInfo.git`
+1. Clonar o repositório: `git clone https://github.com/rgtd-faustino/DAM_TP1_SystemInfo.git`
 2. Abrir o Android Studio e selecionar "Open", apontando para a pasta clonada.
 3. Aguardar que o Gradle sincronize e descarregue as dependências necessárias.
 4. Ligar um dispositivo físico via USB ou configurar um emulador no AVD Manager.
@@ -71,7 +71,7 @@ Para clonar e executar o projeto:
 
 ## 12. Version Control and Commit History
 
-Dado o âmbito reduzido do projeto, o controlo de versões foi gerido de forma simples, com commits na branch `main` organizados segundo a progressão natural do desenvolvimento — primeiro a estrutura de UI e depois a lógica de acesso ao sistema.
+Dado o âmbito reduzido do projeto, o controlo de versões foi gerido de forma simples, com commits na branch `main`. Devido às dimensões curtas do projeto bastou apenas um commit para o integrar no repositório, com os seguintes commits a representarem refinamentos no mesmo e no readme.
 
 ## 13. Difficulties and Lessons Learned
 
