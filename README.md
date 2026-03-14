@@ -17,9 +17,9 @@ A aplicação funciona num único ecrã e não requer permissões especiais alé
 
 ## 3. Arquitetura e Design
 
-A estrutura de ficheiros segue o padrão gerado pelo Android Studio para um projeto de atividade única. O nome do package é `dam_A51394.helloworldoptional`, uma vez que o projeto foi desenvolvido a partir de uma base já existente, para evitar configurar do zero novamente todo o ambiente.
+A estrutura de ficheiros é representada pelo package `dam_A51394.helloworldoptional`.
 
-No layout definido em `activity_main.xml`, foi utilizado o `ConstraintLayout` como raiz, por ser o layout recomendado para posicionamento relativo de elementos. A interface é composta por três elementos principais:
+No layout definido em `activity_main.xml` é composto por três elementos principais:
 - Um `TextView` de título fixo no topo, com fundo verde (`#37B61B`);
 - Um `ImageView` com uma imagem de engrenagem ao centro, a representar o tema de configurações de sistema;
 - Um `TextView` abaixo, que recebe e apresenta os dados obtidos em tempo de execução.
@@ -71,7 +71,7 @@ Para clonar e executar o projeto:
 
 ## 12. Version Control and Commit History
 
-Dado o âmbito reduzido do projeto, o controlo de versões foi gerido de forma simples, com commits na branch `main`. Devido às dimensões curtas do projeto bastou apenas um commit para o integrar no repositório, com os seguintes commits a representarem refinamentos no mesmo e no readme.
+Dado o âmbito reduzido do projeto, o controlo de versões foi gerido de forma simples, com commits na branch `main`. Devido às dimensões curtas do projeto bastou apenas um commit para o integrar no repositório, com os seguintes commits a representarem refinamentos do mesmo e do readme.
 
 ## 13. Difficulties and Lessons Learned
 
