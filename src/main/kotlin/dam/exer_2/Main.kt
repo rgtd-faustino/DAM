@@ -30,4 +30,10 @@ fun main() {
     idCache.evict(1)
     println("After evict id 1, size : ${idCache.size()}")
     println("Id 1 after evict -> ${idCache.get(1)}")
+
+    println()
+
+    // relembrar que o it apanha os elementos que estão dentro da lista em si
+    // então não é preciso fazer um for loop
+    println("Words with count > 0 : ${wordCache.filterValues { it > 0 }}")
 }

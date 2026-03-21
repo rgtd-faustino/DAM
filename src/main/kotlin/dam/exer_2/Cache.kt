@@ -41,4 +41,8 @@ class Cache<K : Any, V : Any> {
         return mapa.toMap(mutableMapOf())
     }
 
+    fun filterValues(predicate: (V) -> Boolean) : Map<K, V>{
+        return mapa.filterValues(predicate)
+    }
+
 }
