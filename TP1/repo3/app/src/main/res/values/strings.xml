@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">System Info App</string>
+    <string name="informa_es_do_sistema">informações do sistema</string>
+    <string name="nome_da_app">nome da app</string>
+    <string name="placeholder">placeholder</string>
+</resources>
