@@ -1,9 +1,4 @@
-package org.example
-
-import org.example.dam.exer_1.Event
-import org.example.dam.exer_1.filterByUser
-import org.example.dam.exer_1.processEvents
-import org.example.dam.exer_1.totalSpent
+package org.example.dam.exer_1
 
 fun main() {
     val events = listOf(
