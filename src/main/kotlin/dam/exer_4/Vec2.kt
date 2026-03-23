@@ -2,7 +2,7 @@ package dam.exer_4
 
 import kotlin.math.sqrt
 
-data class Vec2(val x: Double, val y: Double) {
+data class Vec2(val x: Double, val y: Double) : Comparable<Vec2> {
     // para dar override aos operadores temos de fazer desta maneira
     // basicamente pegamos no valor que estamos a somar e o outro valor que vem depois
     // (this é o vetor da esquerda, value é o vetor da direita)
@@ -24,9 +24,10 @@ data class Vec2(val x: Double, val y: Double) {
 
     // como a função compareTo originalmente só compara número, para comparar vetores temos de calcular as magnitudes
     // e depois como temos números já podemos usar a função compareTo original
-    operator fun compareTo(value: Vec2): Int {
+    // damos override à função da interface Comparable e metemos o nome do param igual à função original
+    override operator fun compareTo(other: Vec2): Int {
         val thisMagnitude = sqrt(this.x * this.x + this.y * this.y) // apanhamos a magnitude do primeiro valor
-        val otherMagnitude = sqrt(value.x * value.x + value.y * value.y) // apanhamos a magnitude do segundo valor
+        val otherMagnitude = sqrt(other.x * other.x + other.y * other.y) // apanhamos a magnitude do segundo valor
         return thisMagnitude.compareTo(otherMagnitude)
     }
 
