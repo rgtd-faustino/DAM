@@ -32,6 +32,33 @@ class Pipeline {
         }
     }
 
+    // apanhamos os steps todos da lista original, depois removemos e juntamos os steps com a junção dos stage nomes
+    // originalmente tinha feito um for loop a percorrer o dicionário, mas lembrei-me que podemos apanhar os valores
+    // diretamente através do nome da chave
+    fun compose(stageName1: String, stageName2: String) {
+        // temos de afirmar que não é nulo senão dá erro
+        val steps1 = stepsList[stageName1]!!
+        val steps2 = stepsList[stageName2]!!
+
+        stepsList.remove(stageName1)
+        stepsList.remove(stageName2)
+
+        // criamos uma função para podermos juntar la dentro as listas de steps
+        stepsList[stageName1 + "_" + stageName2] = { input ->
+            // chamamos a função steps1 com o input e apanhamos o resultado
+            val result1 = steps1(input)
+            // passamos esse resultado ao steps2 (para ser de acordo com o execute do pipeline, ou seja,
+            // seguido para formar uma cadeia seguida) e devolvemos esse resultado final
+            steps2(result1)
+        }
+    }
+
+    // a função toma o input que é a lista de passos e os dois pipelines, no fim retorna o par dos resultados
+    fun fork(input: List<String>, pipeline1: Pipeline, pipeline2: Pipeline): Pair<List<String>, List<String>> {
+        val result1 = pipeline1.execute(input)
+        val result2 = pipeline2.execute(input)
+        return Pair(result1, result2)
+    }
 
 }
 
