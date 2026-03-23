@@ -65,4 +65,27 @@ data class Vec2(val x: Double, val y: Double) : Comparable<Vec2> {
             throw IndexOutOfBoundsException("O index tem que ser 0 ou 1")
         }
     }
+
+    /*
+    estava a tentar fazer o exercício do challenge do destructuring, mas quando fiz as funções component1 e component2
+    isto dava erro, fui ver porquê e aparentemente as data classes já geram component functions
+    então tentei meter override, mas  como continuou a dar erro decidi simplesmente não implementar as funções
+    e mostrar o meu raciocínio ao comentar o código das funções que tinha tentado
+
+    override operator fun component1(): Double {
+        return x
+    }
+
+    override operator fun component2(): Double {
+        return y
+    }
+
+     */
+}
+
+
+// trocamos a ordem da multiplicação e usamos o double para fazer uma função extensão
+// como também meti as funções extensão no ex Event fora da classe, aqui faço o mesmo
+operator fun Double.times(value: Vec2): Vec2 {
+    return Vec2(value.x * this, value.y * this)
 }
