@@ -84,3 +84,8 @@ Resultado: Projeto compilado com sucesso após ajustes de configuração do Java
 Objetivo: Identificar e corrigir problemas encontrados nos testes
 Prompt utilizado: Durante os testes encontrei dois problemas: 1) No ecrã de detalhes algumas imagens aparecem em branco. 2) Não há forma de voltar ao ecrã principal a partir do ecrã de detalhes. Porque é que estes problemas estão a acontecer?
 Resultado: Corrigido o carregamento de imagens HTTP com usesCleartextTraffic e fallback de erro no Glide. Adicionada Toolbar com botão de voltar no ecrã de detalhes.
+
+## Prompt 18
+Objetivo: Implementar Bottom Navigation Bar
+Prompt utilizado: Lê o ficheiro docs/09_feature_extensions.md e implementa a Extensão 1: adiciona uma Bottom Navigation Bar com dois separadores — Galeria e Favoritos.
+Resultado: GalleryFragment.kt e FavoritesFragment.kt criados. MainActivity refatorada para gerir fragmentos. bottom_nav_menu.xml criado com separadores Galeria e Favoritos.

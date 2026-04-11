@@ -1,24 +1,16 @@
 package dam.A51394.mygalleryapp
 
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import dam.A51394.mygalleryapp.adapter.CatImageAdapter
-import dam.A51394.mygalleryapp.viewmodel.MainViewModel
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import dam.A51394.mygalleryapp.ui.FavoritesFragment
+import dam.A51394.mygalleryapp.ui.GalleryFragment
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var viewModel: MainViewModel
-    private lateinit var adapter: CatImageAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,52 +18,35 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0) // Bottom padding will be handled by BottomNav
             insets
         }
 
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
-        setupRecyclerView()
-        setupObservers()
-        setupListeners()
-    }
-
-    private fun setupRecyclerView() {
-        adapter = CatImageAdapter(onClick = { catImage ->
-            val intent = android.content.Intent(this, ImageDetailActivity::class.java).apply {
-                putExtra("EXTRA_CAT_ID", catImage.id)
-                putExtra("EXTRA_CAT_URL", catImage.url)
-            }
-            startActivity(intent)
-        })
-        val recyclerViewCats = findViewById<RecyclerView>(R.id.recyclerViewCats)
-        recyclerViewCats.layoutManager = LinearLayoutManager(this)
-        recyclerViewCats.adapter = adapter
-    }
-
-    private fun setupObservers() {
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-
-        viewModel.catImages.observe(this) { images ->
-            adapter.submitList(images)
+        // Set default fragment
+        if (savedInstanceState == null) {
+            replaceFragment(GalleryFragment())
         }
 
-        viewModel.isLoading.observe(this) { isLoading ->
-            progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        }
-
-        viewModel.errorMessage.observe(this) { error ->
-            error?.let {
-                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_gallery -> {
+                    replaceFragment(GalleryFragment())
+                    true
+                }
+                R.id.nav_favorites -> {
+                    replaceFragment(FavoritesFragment())
+                    true
+                }
+                else -> false
             }
         }
     }
 
-    private fun setupListeners() {
-        val btnRefresh = findViewById<Button>(R.id.btnRefresh)
-        btnRefresh.setOnClickListener {
-            viewModel.fetchImages()
-        }
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .commit()
     }
 }
