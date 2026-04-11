@@ -99,3 +99,8 @@ Resultado: FavoritesViewModel.kt, FavoritesAdapter.kt e item_favorite.xml criado
 Objetivo: Atualizar botão de favoritos no ecrã de detalhes
 Prompt utilizado: Implementa a Extensão 3: atualiza o botão no ecrã de detalhes para mostrar se a imagem já é favorita ou não, e permite removê-la dos favoritos a partir desse ecrã.
 Resultado: FavoritesManager atualizado com isFavorite(). Botão no ecrã de detalhes atualizado para alternar entre adicionar e remover com cores diferentes.
+
+## Prompt 21
+Objetivo: Melhorias visuais da app
+Prompt utilizado: Implementa a Extensão 4: melhora o aspeto visual da app — tema personalizado, cores consistentes, cards com cantos arredondados e informação da imagem visível no ecrã de detalhes.
+Resultado: colors.xml e themes.xml atualizados com paleta Indigo/Amber. item_cat.xml e item_favorite.xml com cantos arredondados 16dp. activity_detail.xml redesenhado com secção de informações da imagem (ID e dimensões).
