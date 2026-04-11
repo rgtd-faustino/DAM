@@ -104,3 +104,8 @@ Resultado: FavoritesManager atualizado com isFavorite(). Botão no ecrã de deta
 Objetivo: Melhorias visuais da app
 Prompt utilizado: Implementa a Extensão 4: melhora o aspeto visual da app — tema personalizado, cores consistentes, cards com cantos arredondados e informação da imagem visível no ecrã de detalhes.
 Resultado: colors.xml e themes.xml atualizados com paleta Indigo/Amber. item_cat.xml e item_favorite.xml com cantos arredondados 16dp. activity_detail.xml redesenhado com secção de informações da imagem (ID e dimensões).
+
+## Prompt 22
+Objetivo: Compilar o projeto e gerar o APK final
+Prompt utilizado: Compila o projeto e gera o APK final atualizado com todas as alterações implementadas.
+Resultado: Projeto compilado com sucesso utilizando JDK 25 e após execução de `clean` para resolver problemas de ambiente com o `jlink`. APK gerado em: `app/build/outputs/apk/debug/app-debug.apk`.
