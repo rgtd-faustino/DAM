@@ -79,3 +79,22 @@ fun getWeatherCodeMap(): Map<Int, WMO_WeatherCode> {
     }
     return weatherMap
 }
+
+// guarda a descrição e o nome da imagem de um código meteorológico
+data class WeatherCodeInfo(
+    val description: String,
+    val image: String
+)
+
+// para não termos os dados hardcoded isto lê o array do XML de recursos e faz um dicionário onde
+// associa cada código metereológico à descrição e imagem
+fun getWeatherCodeMap(context: android.content.Context): Map<Int, WeatherCodeInfo> {
+    val weatherMap = HashMap<Int, WeatherCodeInfo>()
+    // cada item do array está no formato "código,descrição,imagem" então separamos pelas ','
+    // para termos cada um das três partes
+    context.resources.getStringArray(R.array.weather_codes).forEach { entry ->
+        val parts = entry.split(",")
+        weatherMap[parts[0].toInt()] = WeatherCodeInfo(parts[1], parts[2])
+    }
+    return weatherMap
+}

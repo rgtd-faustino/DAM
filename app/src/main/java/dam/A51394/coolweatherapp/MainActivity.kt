@@ -1,5 +1,7 @@
 package dam.A51394.coolweatherapp
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Button
@@ -7,10 +9,14 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import java.io.InputStreamReader
 import java.net.URL
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationServices
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +24,46 @@ class MainActivity : AppCompatActivity() {
     private var day = true
     private var lastLat = 38.76f
     private var lastLon = -9.12f
+
+    // o launcher tem de ser declarado aqui como campo e não dentro do onCreate porque o Android
+    // exige que os launchers de permissão sejam registados antes do onCreate ser chamado,
+    // caso contrário a app tem um erro de IllegalStateException
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        // verificamos se pelo menos uma das permissões foi concedida (fine ou coarse)
+        // fine = GPS preciso, coarse = localização aproximada por rede/wifi
+        if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true)
+            getLocationAndFetch()
+        else
+            // se o utilizador recusou, usamos os valores pré definidos que já estão nas variáveis
+            fetchWeatherData(lastLat, lastLon).start()
+    }
+
+    // apanhamos a localização GPS atual e chamamos a API com essas coordenadas
+    // a permissão já foi verificada antes de chamar esta função no onCreate e no launcher
+    // por isso dizemos ao Android Studio para ignorar o aviso de permissão em falta
+    @SuppressLint("MissingPermission")
+    private fun getLocationAndFetch() {
+        LocationServices.getFusedLocationProviderClient(this)
+            .lastLocation
+            .addOnSuccessListener { location ->
+                // a location pode ser null se o dispositivo não consegue obter uma localização
+                // então são usadas as coordenadas pré definidas
+                if (location != null) {
+                    lastLat = location.latitude.toFloat()
+                    lastLon = location.longitude.toFloat()
+                    findViewById<EditText>(R.id.latitudeValue).setText(lastLat.toString())
+                    findViewById<EditText>(R.id.longitudeValue).setText(lastLon.toString())
+                }
+                fetchWeatherData(lastLat, lastLon).start()
+            }
+            // se alguma coisa falhar usamos as coordenadas pré definidas
+            .addOnFailureListener {
+                fetchWeatherData(lastLat, lastLon).start()
+            }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -51,8 +97,30 @@ class MainActivity : AppCompatActivity() {
         latInput.setText(lastLat.toString())
         lonInput.setText(lastLon.toString())
 
-        // usamos as coordenadas pré definidas dos EditTexts e chamamos a API com elas
-        fetchWeatherData(lastLat, lastLon).start()
+        // usamos as coordenadas atuais do GPS do android que ligou a app e chamamos a API com elas
+        // a não ser que estejamos a trocar os valores após já termos ligado a app
+        if (savedInstanceState != null) {
+            // se o savedInstanceState não é null significa que o onCreate foi chamado por causa
+            // de um recreate então já temos as coordenadas guardadas
+            fetchWeatherData(lastLat, lastLon).start()
+        } else {
+            // senão então é a primeira vez que a app abre e vemos se já temos permissão
+            // para vermos a localização
+            val hasPermission =
+                ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                        ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+            if (hasPermission)
+                getLocationAndFetch()
+            else
+                // se não tivermos permissão pedimos
+                locationPermissionLauncher.launch(arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ))
+        }
 
         // e sempre que o utilizador carregar no botão de update a API é chamada outra vez
         val updateButton = findViewById<Button>(R.id.updateButton)
@@ -156,15 +224,21 @@ class MainActivity : AppCompatActivity() {
             }
 
             // obtém o código de tempo e a imagem correspondente
-            val mapt = getWeatherCodeMap()
+            val mapt = getWeatherCodeMap(this)
             val wCode = mapt[request.current_weather.weathercode]
-            val wImage = when (wCode) {
+            // imagens que terminam em "_" são as que têm versão de dia e noite (ex: clear_day, clear_night)
+            // as restantes são iguais independentemente da hora do dia
+            val wImage = if (wCode?.image?.endsWith("_") == true)
+                if (day) wCode.image + "day" else wCode.image + "night"
+            else
+                wCode?.image
+            /*val wImage = when (wCode) {
                 WMO_WeatherCode.CLEAR_SKY,
                 WMO_WeatherCode.MAINLY_CLEAR,
-                // para corresponder aos nomes das imagens nos drawables metemos day ou night no fim
+                    // para corresponder aos nomes das imagens nos drawables metemos day ou night no fim
                 WMO_WeatherCode.PARTLY_CLOUDY -> if (day) wCode?.image + "day" else wCode?.image + "night"
                 else -> wCode?.image
-            }
+            }*/
 
             // mete a imagem de tempo correspondente
             val resID = resources.getIdentifier(wImage, "drawable", packageName)
