@@ -32,11 +32,9 @@ A autenticação é gerida de forma segura através de uma chave de API injetada
 
 ## Screenshots
 
-| Galeria (Principal) | Detalhes da Raça | Favoritos (FIFO) |
+| Landscape | Night Portrait | Day Portrait |
 |:---:|:---:|:---:|
-| ![Galeria](docs/screenshots/gallery_thumb.png) | ![Detalhes](docs/screenshots/detail_thumb.png) | ![Favoritos](docs/screenshots/favorites_thumb.png) |
-| *Visualização de imagens aleatórias* | *Metadados e descrição da raça* | *Gestão de itens guardados* |
-
+| ![Landscape](landscape.jpeg) | ![Night Portrait](nightPortrait.jpeg) | ![Day Portrait](dayPortrait.jpeg) |
 ---
 
 ## 1. Introdução
