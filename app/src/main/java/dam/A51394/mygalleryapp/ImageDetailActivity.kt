@@ -30,6 +30,14 @@ class ImageDetailActivity : AppCompatActivity() {
         val btnFavorite: Button = findViewById(R.id.btnFavorite)
         val tvId: android.widget.TextView = findViewById(R.id.tvImageId)
         val tvDimensions: android.widget.TextView = findViewById(R.id.tvDimensions)
+        val tvImageUrl: android.widget.TextView = findViewById(R.id.tvImageUrl)
+
+        val tvBreedName: android.widget.TextView = findViewById(R.id.tvBreedName)
+        val tvBreedOrigin: android.widget.TextView = findViewById(R.id.tvBreedOrigin)
+        val tvBreedLifeSpan: android.widget.TextView = findViewById(R.id.tvBreedLifeSpan)
+        val tvBreedTemperament: android.widget.TextView = findViewById(R.id.tvBreedTemperament)
+        val tvBreedDescription: android.widget.TextView = findViewById(R.id.tvBreedDescription)
+        val tvBreedTitle: android.widget.TextView = findViewById(R.id.tvBreedTitle)
 
         val toolbarDetail = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarDetail)
         setSupportActionBar(toolbarDetail)
@@ -46,13 +54,14 @@ class ImageDetailActivity : AppCompatActivity() {
         // Inicializar com o que já temos
         tvId.text = "Ref ID: ${imageId ?: "..."}"
         tvDimensions.text = "Tamanho: a carregar..."
+        tvImageUrl.text = "URL: ${imageUrl ?: "N/A"}"
 
-        // Carregar detalhes reais da API para obter dimensões
+        // Carregar detalhes reais da API para obter dimensões e raça
         imageId?.let {
             viewModel.fetchImageDetails(it)
         }
 
-        setupObservers(tvId, tvDimensions)
+        setupObservers(tvId, tvDimensions, tvImageUrl, tvBreedName, tvBreedOrigin, tvBreedLifeSpan, tvBreedTemperament, tvBreedDescription, tvBreedTitle)
 
         Glide.with(this)
             .load(imageUrl)
@@ -89,11 +98,39 @@ class ImageDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupObservers(tvId: android.widget.TextView, tvDimensions: android.widget.TextView) {
+    private fun setupObservers(
+        tvId: android.widget.TextView, 
+        tvDimensions: android.widget.TextView,
+        tvImageUrl: android.widget.TextView,
+        tvBreedName: android.widget.TextView,
+        tvBreedOrigin: android.widget.TextView,
+        tvBreedLifeSpan: android.widget.TextView,
+        tvBreedTemperament: android.widget.TextView,
+        tvBreedDescription: android.widget.TextView,
+        tvBreedTitle: android.widget.TextView
+    ) {
         viewModel.imageDetail.observe(this) { detail ->
             detail?.let {
                 tvId.text = "Ref ID: ${it.id}"
                 tvDimensions.text = "Tamanho: ${it.width} x ${it.height} px"
+                tvImageUrl.text = "URL: ${it.url}"
+
+                val breed = it.breeds?.firstOrNull()
+                if (breed != null) {
+                    tvBreedTitle.text = "Informação da Raça"
+                    tvBreedName.text = "Raça: ${breed.name}"
+                    tvBreedOrigin.text = "Origem: ${breed.origin ?: "Desconhecida"}"
+                    tvBreedLifeSpan.text = "Esperança de Vida: ${breed.lifeSpan ?: "--"} anos"
+                    tvBreedTemperament.text = "Temperamento: ${breed.temperament ?: "--"}"
+                    tvBreedDescription.text = "Descrição: ${breed.description ?: "Sem descrição disponível."}"
+                } else {
+                    tvBreedTitle.text = "Raça desconhecida"
+                    tvBreedName.text = "Informação não disponível"
+                    tvBreedOrigin.text = "Origem: --"
+                    tvBreedLifeSpan.text = "Esperança de Vida: --"
+                    tvBreedTemperament.text = "Temperamento: --"
+                    tvBreedDescription.text = "Não foram encontrados detalhes sobre a raça deste gato na base de dados."
+                }
             }
         }
 

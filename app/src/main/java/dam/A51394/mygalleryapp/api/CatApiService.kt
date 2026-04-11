@@ -11,7 +11,8 @@ interface CatApiService {
     @GET("v1/images/search")
     suspend fun fetchCatImages(
         @Header("x-api-key") apiKey: String = BuildConfig.CAT_API_KEY,
-        @Query("limit") limit: Int = 10
+        @Query("limit") limit: Int = 10,
+        @Query("has_breeds") hasBreeds: Int = 1
     ): List<CatImage>
 
     @GET("v1/images/{image_id}")
