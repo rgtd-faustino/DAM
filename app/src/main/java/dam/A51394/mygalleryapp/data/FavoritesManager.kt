@@ -35,6 +35,16 @@ class FavoritesManager(context: Context) {
         Toast.makeText(context, "Gato adicionado aos favoritos!", Toast.LENGTH_SHORT).show()
     }
 
+    fun removeFavorite(catId: String, context: Context) {
+        val currentFavs = getFavorites().toMutableList()
+        val removed = currentFavs.removeAll { it.id == catId }
+        
+        if (removed) {
+            saveFavorites(currentFavs)
+            Toast.makeText(context, "Gato removido dos favoritos.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun saveFavorites(list: List<CatImage>) {
         val json = gson.toJson(list)
         prefs.edit().putString("favorites_list", json).apply()

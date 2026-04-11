@@ -89,3 +89,8 @@ Resultado: Corrigido o carregamento de imagens HTTP com usesCleartextTraffic e f
 Objetivo: Implementar Bottom Navigation Bar
 Prompt utilizado: Lê o ficheiro docs/09_feature_extensions.md e implementa a Extensão 1: adiciona uma Bottom Navigation Bar com dois separadores — Galeria e Favoritos.
 Resultado: GalleryFragment.kt e FavoritesFragment.kt criados. MainActivity refatorada para gerir fragmentos. bottom_nav_menu.xml criado com separadores Galeria e Favoritos.
+
+## Prompt 19
+Objetivo: Implementar ecrã de favoritos
+Prompt utilizado: Implementa a Extensão 2: cria o ecrã de favoritos com RecyclerView mostrando as imagens favoritas e botão para remover cada uma.
+Resultado: FavoritesViewModel.kt, FavoritesAdapter.kt e item_favorite.xml criados. FavoritesFragment.kt e FavoritesManager.kt atualizados com lógica de remoção e persistência.
