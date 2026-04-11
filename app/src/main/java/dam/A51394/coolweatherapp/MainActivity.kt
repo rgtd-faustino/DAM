@@ -3,7 +3,9 @@ package dam.A51394.coolweatherapp
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.gson.Gson
+import java.io.InputStreamReader
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,5 +30,24 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
+
+
+    private fun WeatherAPI_Call(lat: Float, long: Float): WeatherData {
+        // esta build string basicamente constrói o URL da API com as coordenadas que oferecemos
+        // e que nos vai fornecer os dados que queremos
+        val reqString = buildString {
+            append("https://api.open-meteo.com/v1/forecast?")
+            append("latitude=${lat}&longitude=${long}&")
+            append("current_weather=true&") // para ser sempre o tempo atual
+            // valores do hourly que queremos
+            append("hourly=temperature_2m,weathercode,pressure_msl,windspeed_10m")
+        }
+
+        // depois aqui abre a ligação ao URL e converte o JSON para o objeto WeatherData através do Gson
+        val url = URL(reqString)
+        url.openStream().use {
+            return Gson().fromJson(InputStreamReader(it, "UTF-8"), WeatherData::class.java)
+        }
     }
 }
