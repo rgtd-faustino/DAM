@@ -1,9 +1,9 @@
-# Assignment 4 — My Cat Gallery App
+# Assignment 3 — My Cat Gallery App
 
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
-**Date:** 11/04/2026  
-**Repository URL:** [DAM_TP2_MIP](https://github.com/rgtd-faustino/DAM_TP2_MIP)
+**Date:** 12/04/2026  
+**Repository URL:** [DAM_TP2_MIP](https://github.com/rgtd-faustino/DAM/edit/main/TP2/repo3/)
 
 ---
 
