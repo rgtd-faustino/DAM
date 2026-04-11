@@ -14,4 +14,10 @@ interface CatApiService {
         @Query("limit") limit: Int = 10
     ): List<CatImage>
 
+    @GET("v1/images/{image_id}")
+    suspend fun fetchCatImageDetail(
+        @retrofit2.http.Path("image_id") imageId: String,
+        @Header("x-api-key") apiKey: String = BuildConfig.CAT_API_KEY
+    ): CatImage
+
 }

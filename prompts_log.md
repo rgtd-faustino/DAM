@@ -109,3 +109,8 @@ Resultado: colors.xml e themes.xml atualizados com paleta Indigo/Amber. item_cat
 Objetivo: Compilar o projeto e gerar o APK final
 Prompt utilizado: Compila o projeto e gera o APK final atualizado com todas as alterações implementadas.
 Resultado: Projeto compilado com sucesso utilizando JDK 25 e após execução de `clean` para resolver problemas de ambiente com o `jlink`. APK gerado em: `app/build/outputs/apk/debug/app-debug.apk`.
+
+## Prompt 23
+Objetivo: Corrigir dimensões 0x0 no ecrã de detalhes
+Prompt utilizado: No ecrã de detalhes as dimensões aparecem como 0x0 pixels. Isto acontece porque a API não devolve width e height no endpoint atual. Corrige isto usando o endpoint https://api.thecatapi.com/v1/images/{id} para obter os detalhes completos da imagem incluindo as dimensões reais, quando o ecrã de detalhes é aberto.
+Resultado: CatApiService.kt atualizado com endpoint de detalhe. CatRepository.kt atualizado com getCatImageDetail. DetailViewModel.kt criado. ImageDetailActivity.kt atualizado para mostrar dimensões reais após carregamento da API.

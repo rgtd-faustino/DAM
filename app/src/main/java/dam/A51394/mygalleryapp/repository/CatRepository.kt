@@ -41,4 +41,17 @@ class CatRepository(context: Context) {
             Result.failure(Exception("Erro inesperado: ${e.localizedMessage}"))
         }
     }
+
+    suspend fun getCatImageDetail(imageId: String): Result<CatImage> {
+        return try {
+            val image = apiService.fetchCatImageDetail(imageId)
+            Result.success(image)
+        } catch (e: HttpException) {
+            Result.failure(Exception("Erro ao obter detalhes (Servidor: ${e.code()})"))
+        } catch (e: IOException) {
+            Result.failure(Exception("Sem ligação à internet para obter detalhes."))
+        } catch (e: Exception) {
+            Result.failure(Exception("Erro inesperado nos detalhes: ${e.localizedMessage}"))
+        }
+    }
 }
