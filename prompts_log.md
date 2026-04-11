@@ -49,3 +49,23 @@ Resultado: MainActivity.kt ligada ao ViewModel, observando LiveData para atualiz
 Objetivo: Criar ecrã de detalhes
 Prompt utilizado: Executa o Passo 10: cria o layout activity_detail.xml e a classe ImageDetailActivity.kt.
 Resultado: Layout activity_detail.xml e ImageDetailActivity.kt criados.
+
+## Prompt 11
+Objetivo: Implementar lógica de favoritos FIFO
+Prompt utilizado: Executa o Passo 11: implementa a lógica de favoritos com uma fila FIFO de máximo 5 itens.
+Resultado: Lógica de favoritos implementada com fila FIFO de máximo 5 itens.
+
+## Prompt 12
+Objetivo: Implementar cache de imagens
+Prompt utilizado: Executa o Passo 12: implementa a cache de imagens com máximo 50 itens.
+Resultado: Cache de imagens implementada com máximo 50 itens.
+
+## Prompt 13
+Objetivo: Implementar acesso offline
+Prompt utilizado: Executa o Passo 13: implementa o acesso offline usando os dados em cache.
+Resultado: Acesso offline implementado usando dados em cache.
+
+## Prompt 14
+Objetivo: Tratamento de erros da API
+Prompt utilizado: Executa o Passo 14: trata os erros da API de forma adequada no Repositório e no ViewModel.
+Resultado: Tratamento de erros implementado no Repositório e no ViewModel.

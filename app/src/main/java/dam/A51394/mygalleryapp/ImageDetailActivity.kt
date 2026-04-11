@@ -32,9 +32,21 @@ class ImageDetailActivity : AppCompatActivity() {
             .load(imageUrl)
             .into(imageViewDetail)
 
+        val favManager = dam.A51394.mygalleryapp.data.FavoritesManager(this)
+
         btnFavorite.setOnClickListener {
-            // Lógica dos favoritos será implementada no Passo 11
-            Toast.makeText(this, "A implementar no Passo 11!", Toast.LENGTH_SHORT).show()
+            if (imageId != null && imageUrl != null) {
+                val cat = dam.A51394.mygalleryapp.model.CatImage(
+                    id = imageId, 
+                    url = imageUrl, 
+                    width = null, 
+                    height = null, 
+                    isFavourite = true
+                )
+                favManager.addFavorite(cat, this)
+            } else {
+                Toast.makeText(this, "Erro: Falta informação desta imagem.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
