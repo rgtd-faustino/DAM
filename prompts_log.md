@@ -24,3 +24,28 @@ Resultado: Interface CatApiService.kt criada com Retrofit.
 Objetivo: Criar o Repositório
 Prompt utilizado: Executa o Passo 5: cria a classe CatRepository.kt.
 Resultado: Classe CatRepository.kt criada.
+
+## Prompt 6
+Objetivo: Criar o ViewModel
+Prompt utilizado: Executa o Passo 6: cria o ViewModel MainViewModel.kt com LiveData<List<CatImage>>.
+Resultado: MainViewModel.kt criado com LiveData<List<CatImage>>, estado de loading e erros.
+
+## Prompt 7
+Objetivo: Desenhar o layout activity_main.xml
+Prompt utilizado: Executa o Passo 7: desenha o layout activity_main.xml com RecyclerView, botão de atualização e ProgressBar.
+Resultado: Layout activity_main.xml criado com RecyclerView, botão de atualização e ProgressBar.
+
+## Prompt 8
+Objetivo: Criar o adaptador da RecyclerView
+Prompt utilizado: Executa o Passo 8: cria o adaptador CatImageAdapter.kt usando Glide para carregar as imagens.
+Resultado: CatImageAdapter.kt criado com Glide para carregar imagens.
+
+## Prompt 9
+Objetivo: Ligar MainActivity ao ViewModel
+Prompt utilizado: Executa o Passo 9: liga a MainActivity.kt ao ViewModel e observa a LiveData para atualizar a interface.
+Resultado: MainActivity.kt ligada ao ViewModel, observando LiveData para atualizar a interface.
+
+## Prompt 10
+Objetivo: Criar ecrã de detalhes
+Prompt utilizado: Executa o Passo 10: cria o layout activity_detail.xml e a classe ImageDetailActivity.kt.
+Resultado: Layout activity_detail.xml e ImageDetailActivity.kt criados.

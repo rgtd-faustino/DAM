@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "dam.A51394.mygalleryapp"
+    namespace = "dam.A51394.mycatgalleryapp"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
