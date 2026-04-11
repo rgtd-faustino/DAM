@@ -12,7 +12,7 @@ if (localPropertiesFile.exists()) {
 val catApiKey = localProperties.getProperty("CAT_API_KEY", "") ?: ""
 
 android {
-    namespace = "dam.A51394.mycatgalleryapp"
+    namespace = "dam.A51394.mygalleryapp"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1

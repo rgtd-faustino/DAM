@@ -1,6 +1,6 @@
 package dam.A51394.mygalleryapp.api
 
-import dam.A51394.mycatgalleryapp.BuildConfig
+import dam.A51394.mygalleryapp.BuildConfig
 import dam.A51394.mygalleryapp.model.CatImage
 import retrofit2.http.GET
 import retrofit2.http.Header

@@ -25,7 +25,7 @@ class CatRepository(context: Context) {
 
     suspend fun getCatImages(limit: Int = 10): Result<List<CatImage>> {
         return try {
-            val images = apiService.fetchCatImages(limit)
+            val images = apiService.fetchCatImages(limit = limit)
             cacheManager.addImagesToCache(images)
             Result.success(images)
         } catch (e: HttpException) {
