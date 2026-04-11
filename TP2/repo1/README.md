@@ -1,9 +1,9 @@
-# Assignment 2 — Kotlin
+# Assignment 1 — Kotlin
 
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
 **Date:** 12/04/2026  
-**Repository URL:** [DAM_TP2_Kotlin](https://github.com/rgtd-faustino/DAM_TP2_Kotlin)
+**Repository URL:** [DAM_TP2_Kotlin](https://github.com/rgtd-faustino/DAM/edit/main/TP2/repo1/)
 
 ---
 
