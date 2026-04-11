@@ -94,3 +94,8 @@ Resultado: GalleryFragment.kt e FavoritesFragment.kt criados. MainActivity refat
 Objetivo: Implementar ecrã de favoritos
 Prompt utilizado: Implementa a Extensão 2: cria o ecrã de favoritos com RecyclerView mostrando as imagens favoritas e botão para remover cada uma.
 Resultado: FavoritesViewModel.kt, FavoritesAdapter.kt e item_favorite.xml criados. FavoritesFragment.kt e FavoritesManager.kt atualizados com lógica de remoção e persistência.
+
+## Prompt 20
+Objetivo: Atualizar botão de favoritos no ecrã de detalhes
+Prompt utilizado: Implementa a Extensão 3: atualiza o botão no ecrã de detalhes para mostrar se a imagem já é favorita ou não, e permite removê-la dos favoritos a partir desse ecrã.
+Resultado: FavoritesManager atualizado com isFavorite(). Botão no ecrã de detalhes atualizado para alternar entre adicionar e remover com cores diferentes.

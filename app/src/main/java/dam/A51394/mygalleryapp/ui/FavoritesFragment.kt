@@ -52,6 +52,8 @@ class FavoritesFragment : Fragment() {
                 val intent = Intent(requireContext(), ImageDetailActivity::class.java).apply {
                     putExtra("EXTRA_CAT_ID", cat.id)
                     putExtra("EXTRA_CAT_URL", cat.url)
+                    putExtra("EXTRA_CAT_WIDTH", cat.width ?: 0)
+                    putExtra("EXTRA_CAT_HEIGHT", cat.height ?: 0)
                 }
                 startActivity(intent)
             }

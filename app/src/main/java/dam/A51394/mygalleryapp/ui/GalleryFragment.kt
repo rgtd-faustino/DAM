@@ -45,6 +45,8 @@ class GalleryFragment : Fragment() {
             val intent = Intent(requireContext(), ImageDetailActivity::class.java).apply {
                 putExtra("EXTRA_CAT_ID", catImage.id)
                 putExtra("EXTRA_CAT_URL", catImage.url)
+                putExtra("EXTRA_CAT_WIDTH", catImage.width ?: 0)
+                putExtra("EXTRA_CAT_HEIGHT", catImage.height ?: 0)
             }
             startActivity(intent)
         })

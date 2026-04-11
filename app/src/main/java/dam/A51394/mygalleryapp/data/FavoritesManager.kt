@@ -16,6 +16,10 @@ class FavoritesManager(context: Context) {
         return gson.fromJson(json, type)
     }
 
+    fun isFavorite(catId: String): Boolean {
+        return getFavorites().any { it.id == catId }
+    }
+
     fun addFavorite(cat: CatImage, context: Context) {
         val currentFavs = getFavorites().toMutableList()
         
