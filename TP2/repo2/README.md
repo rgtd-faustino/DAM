@@ -1,9 +1,9 @@
-# Assignment 4 — CoolWeather App
+# Assignment 2 — CoolWeather App
 
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
 **Date:** 12/04/2026  
-**Repository URL:** https://github.com/rgtd-faustino/DAM_TP2_CoolWeather
+**Repository URL:** [DAM_TP1_CoolWeatherApp](https://github.com/rgtd-faustino/DAM/edit/main/TP2/repo2/)
 
 ---
 
