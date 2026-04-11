@@ -25,11 +25,19 @@ class ImageDetailActivity : AppCompatActivity() {
         val imageViewDetail: ImageView = findViewById(R.id.imageViewDetail)
         val btnFavorite: Button = findViewById(R.id.btnFavorite)
 
+        val toolbarDetail = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarDetail)
+        setSupportActionBar(toolbarDetail)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbarDetail.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         val imageUrl = intent.getStringExtra("EXTRA_CAT_URL")
         val imageId = intent.getStringExtra("EXTRA_CAT_ID")
 
         Glide.with(this)
             .load(imageUrl)
+            .error(android.R.drawable.ic_menu_report_image)
             .into(imageViewDetail)
 
         val favManager = dam.A51394.mygalleryapp.data.FavoritesManager(this)

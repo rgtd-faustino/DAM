@@ -79,3 +79,8 @@ Resultado: API key configurada via local.properties e BuildConfig. build.gradle.
 Objetivo: Compilar o projeto e gerar o APK
 Prompt utilizado: Executa o Passo 15: compila o projeto, verifica que não há erros e gera o APK.
 Resultado: Projeto compilado com sucesso após ajustes de configuração do Java SDK. APK gerado em app/build/outputs/apk/debug/app-debug.apk.
+
+## Prompt 17
+Objetivo: Identificar e corrigir problemas encontrados nos testes
+Prompt utilizado: Durante os testes encontrei dois problemas: 1) No ecrã de detalhes algumas imagens aparecem em branco. 2) Não há forma de voltar ao ecrã principal a partir do ecrã de detalhes. Porque é que estes problemas estão a acontecer?
+Resultado: Corrigido o carregamento de imagens HTTP com usesCleartextTraffic e fallback de erro no Glide. Adicionada Toolbar com botão de voltar no ecrã de detalhes.
