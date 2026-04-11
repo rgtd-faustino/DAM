@@ -8,4 +8,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="viewBG">#AA000000</color>
     <color name="WeatherLabel">#FFFFFFFF</color>
+    <color name="WeatherValue">#FFD700</color>
+    <color name="EditTextBG">#33FFFFFF</color>
+    <color name="UpdateButton">#7DBF2A</color>
+    <color name="UpdateButtonText">#000000</color>
 </resources>

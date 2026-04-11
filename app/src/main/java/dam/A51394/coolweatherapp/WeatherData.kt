@@ -8,7 +8,15 @@ data class WeatherData(
     var longitude: String,
     var timezone: String,
     var current_weather: CurrentWeather,
-    var hourly: Hourly
+    var hourly: Hourly,
+    // para trocar entre o tema dia e noite, volta se a repetir o sistema de classes que já usamos
+    var daily: Daily
+)
+
+// basicamente se a hora atual estiver entre o nascer e pôr do sol então é dia, senão é noite
+data class Daily(
+    var sunrise: ArrayList<String>,
+    var sunset: ArrayList<String>
 )
 
 // em vez de meter estas variáveis na classe WeatherData criamos outra para o código ficar
