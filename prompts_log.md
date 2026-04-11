@@ -115,7 +115,12 @@ Objetivo: Corrigir dimensões 0x0 no ecrã de detalhes
 Prompt utilizado: No ecrã de detalhes as dimensões aparecem como 0x0 pixels. Isto acontece porque a API não devolve width e height no endpoint atual. Corrige isto usando o endpoint https://api.thecatapi.com/v1/images/{id} para obter os detalhes completos da imagem incluindo as dimensões reais, quando o ecrã de detalhes é aberto.
 Resultado: CatApiService.kt atualizado com endpoint de detalhe. CatRepository.kt atualizado com getCatImageDetail. DetailViewModel.kt criado. ImageDetailActivity.kt atualizado para mostrar dimensões reais após carregamento da API.
 
-## Prompt 23
+## Prompt 24
 Objetivo: Mostrar informação de raça no ecrã de detalhes
 Prompt utilizado: Atualiza a app para mostrar mais informação no ecrã de detalhes. Altera o endpoint de pesquisa para incluir has_breeds=true. Atualiza o modelo CatImage para incluir um array de breeds com os campos: name, origin, temperament, description e life_span. No ecrã de detalhes, mostra esses campos se estiverem disponíveis, e o URL da imagem. Se a imagem não tiver raça associada, mostra uma mensagem "Raça desconhecida".
 Resultado: CatImage.kt atualizado com data class Breed. CatApiService.kt atualizado com has_breeds=1. activity_detail.xml expandido com secção de raça. ImageDetailActivity.kt atualizado com lógica de fallback para gatos sem raça.
+
+## Prompt 25
+Objetivo: Compilar o projeto final com informação de raças
+Prompt utilizado: Compila o projeto e gera o APK final atualizado com todas as alterações implementadas.
+Resultado: Projeto compilado com sucesso. APK final com suporte a metadados de raça, dimensões corrigidas e layout premium gerado em: `app/build/outputs/apk/debug/app-debug.apk`.
