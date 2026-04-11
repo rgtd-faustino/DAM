@@ -34,7 +34,7 @@ A autenticação é gerida de forma segura através de uma chave de API injetada
 
 | Landscape | Night Portrait | Day Portrait |
 |:---:|:---:|:---:|
-| ![Landscape](landscape.jpeg) | ![Night Portrait](nightPortrait.jpeg) | ![Day Portrait](dayPortrait.jpeg) |
+| ![Landscape](docs/screenshots/landscape.jpeg) | ![Night Portrait](docs/screenshots/nightPortrait.jpeg) | ![Day Portrait](docs/screenshots/dayPortrait.jpeg) |
 ---
 
 ## 1. Introdução
