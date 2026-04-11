@@ -60,6 +60,7 @@ class GalleryFragment : Fragment() {
 
         viewModel.catImages.observe(viewLifecycleOwner) { images ->
             adapter.submitList(images)
+            view.findViewById<RecyclerView>(R.id.recyclerViewCats).scrollToPosition(0)
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->

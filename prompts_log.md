@@ -124,3 +124,13 @@ Resultado: CatImage.kt atualizado com data class Breed. CatApiService.kt atualiz
 Objetivo: Compilar o projeto final com informação de raças
 Prompt utilizado: Compila o projeto e gera o APK final atualizado com todas as alterações implementadas.
 Resultado: Projeto compilado com sucesso. APK final com suporte a metadados de raça, dimensões corrigidas e layout premium gerado em: `app/build/outputs/apk/debug/app-debug.apk`.
+
+## Prompt 25
+Objetivo: Melhorias finais na app
+Prompt utilizado: Faz as seguintes melhorias na app: 1. Atualiza o README.md com uma descrição final do projeto, funcionalidades implementadas e instruções de execução. 2. Muda o ícone de remover nos favoritos para vermelho para ser mais intuitivo. 3. Quando o utilizador carrega no botão de atualizar na galeria, faz scroll automático para o topo da RecyclerView depois de carregar as novas imagens.
+Resultado: README.md atualizado. Ícone de remover nos favoritos alterado para vermelho. Scroll automático para o topo implementado ao atualizar a galeria.
+
+## Prompt 26
+Objetivo: Compilar o APK final polido
+Prompt utilizado: Compila o projeto e gera o APK final atualizado.
+Resultado: APK final polido (ícone vermelho e scroll auto) gerado com sucesso em: `app/build/outputs/apk/debug/app-debug.apk`. Erro de compilação no Fragment e conflito de ambiente com o `jlink` resolvidos durante o processo.
