@@ -32,9 +32,9 @@ A autenticação é gerida de forma segura através de uma chave de API injetada
 
 ## Screenshots
 
-| Landscape | Night Portrait | Day Portrait |
-|:---:|:---:|:---:|
-| ![Landscape](docs/screenshots/landscape.jpeg) | ![Night Portrait](docs/screenshots/nightPortrait.jpeg) | ![Day Portrait](docs/screenshots/dayPortrait.jpeg) |
+|          Galeria          |         Favoritos         |           Imagem Detalhes            |
+|:-------------------------:|:-------------------------:|:------------------------------------:|
+| ![Galeria](Favoritos.png) | ![Favoritos](Galeria.png) | ![Imagem Detalhes](MenuDetalhes.png) |
 ---
 
 ## 1. Introdução
