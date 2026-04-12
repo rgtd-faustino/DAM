@@ -34,7 +34,7 @@ A autenticação é gerida de forma segura através de uma chave de API injetada
 
 |          Galeria          |         Favoritos         |           Imagem Detalhes            |
 |:-------------------------:|:-------------------------:|:------------------------------------:|
-| ![Galeria](Favoritos.png) | ![Favoritos](Galeria.png) | ![Imagem Detalhes](MenuDetalhes.png) |
+| ![Galeria](Screenshots/Favoritos.png) | ![Favoritos](Screenshots/Galeria.png) | ![Imagem Detalhes](Screenshots/MenuDetalhes.png) |
 ---
 
 ## 1. Introdução
