@@ -11,10 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import dam.a51394.cooljetpackweatherapp.ui.WeatherUI
 import dam.a51394.cooljetpackweatherapp.ui.theme.CoolJetpackWeatherAppTheme
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    /*override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -27,9 +28,18 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }*/
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            CoolJetpackWeatherAppTheme {
+                WeatherUI()
+            }
+        }
     }
 }
-
+/*
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
@@ -44,4 +54,4 @@ fun GreetingPreview() {
     CoolJetpackWeatherAppTheme {
         Greeting("Android")
     }
-}
+}*/
