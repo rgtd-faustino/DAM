@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CoolJetpackWeatherApp</string>
+    <string name="update_weather">Update Weather</string>
 </resources>
