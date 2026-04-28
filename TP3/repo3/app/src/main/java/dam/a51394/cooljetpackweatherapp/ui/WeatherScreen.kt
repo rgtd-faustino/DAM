@@ -27,8 +27,10 @@ fun WeatherUI ( weatherViewModel : WeatherViewModel = viewModel () ) {
     val wImage = when ( wCode ) {
         WMO_WeatherCode . CLEAR_SKY ,
         WMO_WeatherCode. MAINLY_CLEAR ,
-        WMO_WeatherCode . PARTLY_CLOUDY -> if ( day ) wCode ?. image + " day "
-        else wCode ?. image + " night "
+        // tirei os espaços senão dava bug e não encontrava a imagem
+        WMO_WeatherCode . PARTLY_CLOUDY -> if ( day ) wCode ?. image + "day"
+        // tirei os espaços senão dava bug e não encontrava a imagem
+        else wCode ?. image + "night"
         else -> wCode ?. image
     }
     val context = LocalContext . current

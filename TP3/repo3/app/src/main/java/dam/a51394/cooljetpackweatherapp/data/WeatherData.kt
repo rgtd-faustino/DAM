@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 // contentores de dados que depois servirão para dar output
 @Serializable
 data class WeatherData(
-    var latitude: String,
-    var longitude: String,
+    var latitude: Float,
+    var longitude: Float,
     var timezone: String,
     var current_weather: CurrentWeather,
     var hourly: Hourly,

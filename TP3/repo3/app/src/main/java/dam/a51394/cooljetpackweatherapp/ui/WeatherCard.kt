@@ -1,36 +1,42 @@
 package dam.a51394.cooljetpackweatherapp.ui
 
-import android.widget.Space
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun WeatherCard() {
+fun WeatherCard(
+    seaLevelPressure: Float,
+    windDirection: Int,
+    windSpeed: Float,
+    temperature: Float,
+    time: String
+) {
     Card(modifier = Modifier.padding(16.dp)) {
         Column(modifier = Modifier.padding(16.dp)) {
-            WeatherRow(label = "Sea Level Pressure", value = "0.0 hPa")
-            WeatherRow(label = "Wind Direction", value = "296°")
-            WeatherRow(label = "Wind Speed", value = "20.8 km/h")
-            WeatherRow(label = "Temperature", value = "14.4°C")
-            WeatherRow(label = "Time", value = "2025-03-26T14:45")
+            // usamos os valores dos parâmetros que vamos receber do resultado
+            WeatherRow(label = "Sea Level Pressure", value = "$seaLevelPressure hPa")
+            WeatherRow(label = "Wind Direction", value = "$windDirection°")
+            WeatherRow(label = "Wind Speed", value = "$windSpeed km/h")
+            WeatherRow(label = "Temperature", value = "$temperature°C")
+            WeatherRow(label = "Time", value = time)
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun WeatherCardPreview(){
-    WeatherCard()
+fun WeatherCardPreview() {
+    // no preview passamos valores fixos só para ver se o design está bom
+    WeatherCard(
+        seaLevelPressure = 0.0f,
+        windDirection = 296,
+        windSpeed = 20.8f,
+        temperature = 14.4f,
+        time = "2025-03-26T14:45"
+    )
 }
