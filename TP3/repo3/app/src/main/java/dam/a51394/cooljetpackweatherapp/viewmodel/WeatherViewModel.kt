@@ -31,6 +31,17 @@ class WeatherViewModel : ViewModel() {
             if (data != null) {
                 val cw = data.current_weather
                 val pressure = data.hourly.pressure_msl.firstOrNull()?.toFloat() ?: 0f
+
+                // calcular se é dia ou noite
+                val isDay = try {
+                    val currentTime = cw.time  // formato "2025-03-26T14:45"
+                    val sunrise = data.daily?.sunrise?.firstOrNull() ?: ""
+                    val sunset = data.daily?.sunset?.firstOrNull() ?: ""
+                    currentTime >= sunrise && currentTime < sunset
+                } catch (e: Exception) {
+                    true
+                }
+
                 _uiState.update {
                     it.copy(
                         temperature = cw.temperature,
@@ -38,7 +49,8 @@ class WeatherViewModel : ViewModel() {
                         winddirection = cw.winddirection,
                         weathercode = cw.weathercode,
                         seaLevelPressure = pressure,
-                        time = cw.time
+                        time = cw.time,
+                        isDay = isDay
                     )
                 }
             }

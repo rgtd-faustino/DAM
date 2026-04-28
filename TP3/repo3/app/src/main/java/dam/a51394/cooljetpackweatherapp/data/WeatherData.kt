@@ -13,7 +13,7 @@ data class WeatherData(
     var current_weather: CurrentWeather,
     var hourly: Hourly,
     // para trocar entre o tema dia e noite, volta se a repetir o sistema de classes que já usamos
-    var daily: Daily
+    var daily: Daily? = null
 )
 
 // basicamente se a hora atual estiver entre o nascer e pôr do sol então é dia, senão é noite

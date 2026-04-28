@@ -6,11 +6,7 @@ plugins {
 
 android {
     namespace = "dam.a51394.cooljetpackweatherapp"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "dam.a51394.cooljetpackweatherapp"
