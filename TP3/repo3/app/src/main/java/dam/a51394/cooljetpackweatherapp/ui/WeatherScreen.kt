@@ -38,6 +38,7 @@ fun WeatherUI ( weatherViewModel : WeatherViewModel = viewModel () ) {
     val weathercode = weatherUIState . weathercode
     val seaLevelPressure = weatherUIState . seaLevelPressure
     val time = weatherUIState . time
+    val favorites = weatherUIState.favorites // para os favoritos
     val configuration = LocalConfiguration . current
     val day = weatherUIState.isDay
     val mapt = getWeatherCodeMap () ;
@@ -65,6 +66,11 @@ fun WeatherUI ( weatherViewModel : WeatherViewModel = viewModel () ) {
             weathercode ,
             seaLevelPressure ,
             time ,
+            // apanhamos aqui todos os outros valores apanhamos também os favoritos
+            favorites = favorites,
+            onAddFavorite = { name -> weatherViewModel.addFavorite(name) },
+            onSelectFavorite = { favorite -> weatherViewModel.selectFavorite(favorite) },
+            onRemoveFavorite = { favorite -> weatherViewModel.removeFavorite(favorite) },
             onLatitudeChange = {
                     newValue -> newValue . toFloatOrNull () ?. let {
                 weatherViewModel . updateLatitude ( it ) }
@@ -88,6 +94,11 @@ fun WeatherUI ( weatherViewModel : WeatherViewModel = viewModel () ) {
             weathercode ,
             seaLevelPressure ,
             time ,
+            // apanhamos aqui todos os outros valores apanhamos também os favoritos
+            favorites = favorites,
+            onAddFavorite = { name -> weatherViewModel.addFavorite(name) },
+            onSelectFavorite = { favorite -> weatherViewModel.selectFavorite(favorite) },
+            onRemoveFavorite = { favorite -> weatherViewModel.removeFavorite(favorite) },
             onLatitudeChange = {
                     newValue ->
                 newValue . toFloatOrNull () ?. let {
@@ -118,6 +129,10 @@ fun PortraitWeatherUI(
     onLatitudeChange: (String) -> Unit,
     onLongitudeChange: (String) -> Unit,
     onUpdateButtonClick: () -> Unit,
+    favorites: List<FavoriteLocation>,
+    onAddFavorite: (String) -> Unit,
+    onSelectFavorite: (FavoriteLocation) -> Unit,
+    onRemoveFavorite: (FavoriteLocation) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -130,6 +145,7 @@ fun PortraitWeatherUI(
 
         // só mostramos a imagem se o wIcon não for 0, porque o getIdentifier
         // retorna 0 quando não encontra o recurso e depois o preview não dá refresh
+        // que era o que estava a acontecer antes de adicionar as imagens
         if (wIcon != 0) {
             Image(
                 painter = painterResource(id = wIcon),
@@ -144,7 +160,11 @@ fun PortraitWeatherUI(
             latitude = latitude,
             longitude = longitude,
             onLatitudeChange = onLatitudeChange,
-            onLongitudeChange = onLongitudeChange
+            onLongitudeChange = onLongitudeChange,
+            favorites = favorites,
+            onAddFavorite = onAddFavorite,
+            onSelectFavorite = onSelectFavorite,
+            onRemoveFavorite = onRemoveFavorite
         )
 
         // card com os dados que vieram da API
@@ -180,6 +200,10 @@ fun LandscapeWeatherUI(
     onLatitudeChange: (String) -> Unit,
     onLongitudeChange: (String) -> Unit,
     onUpdateButtonClick: () -> Unit,
+    favorites: List<FavoriteLocation>,
+    onAddFavorite: (String) -> Unit,
+    onSelectFavorite: (FavoriteLocation) -> Unit,
+    onRemoveFavorite: (FavoriteLocation) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -205,7 +229,11 @@ fun LandscapeWeatherUI(
             latitude = latitude,
             longitude = longitude,
             onLatitudeChange = onLatitudeChange,
-            onLongitudeChange = onLongitudeChange
+            onLongitudeChange = onLongitudeChange,
+            favorites = favorites,
+            onAddFavorite = onAddFavorite,
+            onSelectFavorite = onSelectFavorite,
+            onRemoveFavorite = onRemoveFavorite
         )
 
         WeatherCard(
@@ -242,7 +270,11 @@ fun PortraitWeatherUIPreview() {
         time = "2025-03-26T14:45",
         onLatitudeChange = {},
         onLongitudeChange = {},
-        onUpdateButtonClick = {}
+        onUpdateButtonClick = {},
+        favorites = emptyList(),
+        onAddFavorite = {},
+        onSelectFavorite = {},
+        onRemoveFavorite = {}
     )
 }
 
@@ -261,6 +293,10 @@ fun LandscapeWeatherUIPreview() {
         time = "2025-03-26T14:45",
         onLatitudeChange = {},
         onLongitudeChange = {},
-        onUpdateButtonClick = {}
+        onUpdateButtonClick = {},
+        favorites = emptyList(),
+        onAddFavorite = {},
+        onSelectFavorite = {},
+        onRemoveFavorite = {}
     )
 }

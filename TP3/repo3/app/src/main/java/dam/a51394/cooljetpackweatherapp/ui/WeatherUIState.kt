@@ -9,5 +9,14 @@ data class WeatherUIState(
     val weathercode: Int = 0,
     val seaLevelPressure: Float = 0f,
     val time: String = "",
-    val isDay: Boolean = true
+    val isDay: Boolean = true,
+    // da mesma maneira que fizémos ocm as classes podemos adicionar aqui uma que tenha
+    // os parametros latitude e longitude para definir a localização e metemos o nome para
+    // sabermos qual é
+    val favorites: List<FavoriteLocation> = emptyList()
+)
+data class FavoriteLocation(
+    val name: String,
+    val latitude: Float,
+    val longitude: Float
 )
