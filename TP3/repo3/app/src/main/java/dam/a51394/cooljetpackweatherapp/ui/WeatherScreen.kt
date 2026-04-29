@@ -123,7 +123,9 @@ fun PortraitWeatherUI(
         modifier = Modifier
             // para dar vertical scroll se o conteúdo sair do telemóvel
             .verticalScroll(rememberScrollState())
-            .padding(8.dp)
+            .padding(8.dp),
+        // para que o icone fique centrado como está no landscape (esqueci me)
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         // só mostramos a imagem se o wIcon não for 0, porque o getIdentifier
