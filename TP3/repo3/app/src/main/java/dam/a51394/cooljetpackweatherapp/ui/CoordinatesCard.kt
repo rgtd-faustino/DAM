@@ -37,10 +37,17 @@ fun CoordinatesCard(
 ) {
     // estado local para guardar o texto que o utilizador está a escrever
     // a chave (latitude/longitude) faz com que o texto atualize quando
-    // selecionamos um favorito, porque o valor do viewmodel muda
+    // selecionamos um favorito ou quando o utlizador introduz valores, porque o valor do viewmodel muda
+
+    // sem chave o remember só corre uma vez e fica preso no valor inicial, então ao selecionar
+    // um favorito (Lisboa: lat 38.7, lon 9.1) o campo não atualizava, mas com chave o
+    // remember recria o estado local sempre que o Float do ViewModel muda, o que resolve os
+    // favoritos, mas tinha um problema que era que ao apagar dígitos ("38.7223" -> "38.")
+    // o ViewModel convertia "38." para 38.0f, o remember recriava o latText com "38.0" e o
+    // campo resetava sozinho a meio da edição, o que era muito chato, mas pensei que era melhor do
+    // que os favoritos não funcionarem, mas depois isto foi resolvido no comentário embaixo
     val latText = remember(latitude) { mutableStateOf(latitude.toString()) }
     val lonText = remember(longitude) { mutableStateOf(longitude.toString()) }
-    // estado local para guardar o nome do favorito que o utilizador está a escrever
     val favoriteName = remember { mutableStateOf("") }
 
     Card(modifier = Modifier.padding(16.dp)) {
@@ -50,8 +57,12 @@ fun CoordinatesCard(
 
             Text(text = "Latitude")
             OutlinedTextField(
-                // mostra o valor local em vez do float do viewmodel diretamente
-                // assim o utilizador consegue escrever sem o texto ser apagado
+                // usamos o latText.value (que é o estado local em String) em vez da latitude
+                // (que é o Float do ViewModel) diretamente porque se usássemos o Float do ViewModel
+                // diretamente fazia com que o Compose redesenhava o campo com o valor já convertido
+                // (por exemplo "38.0") sempre que o utilizador apagava dígitos  o que era chato
+                // porque aparecia lixo no meio da edição, então assim o estado local serve de
+                // "buffer" entre o que o utilizador está a escrever e o valor que o ViewModel tem guardado
                 value = latText.value,
                 onValueChange = {
                     latText.value = it
@@ -66,8 +77,12 @@ fun CoordinatesCard(
 
             Text(text = "Longitude")
             OutlinedTextField(
-                // mostra o valor local em vez do float do viewmodel diretamente
-                // assim o utilizador consegue escrever sem o texto ser apagado
+                // usamos o lonText.value (que é o estado local em String) em vez da longitude
+                // (que é o Float do ViewModel) diretamente porque se usássemos o Float do ViewModel
+                // diretamente fazia com que o Compose redesenhava o campo com o valor já convertido
+                // (por exemplo "38.0") sempre que o utilizador apagava dígitos  o que era chato
+                // porque aparecia lixo no meio da edição, então assim o estado local serve de
+                // "buffer" entre o que o utilizador está a escrever e o valor que o ViewModel tem guardado
                 value = lonText.value,
                 onValueChange = {
                     lonText.value = it
