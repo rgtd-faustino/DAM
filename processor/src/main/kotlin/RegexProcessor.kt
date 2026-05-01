@@ -90,6 +90,10 @@ class RegexProcessor : AbstractProcessor() {
                 // pelo que entendi o extractRegex vai substituir o %S e assim vai ficar igual
                 // ao código gerado que queremos
                 .addStatement("val match = Regex(%S).find(input)", extractRegex)
+                // quando é feito Regex("Name: (\\w+)").find("Name: John") o kotlin guarda dois valores:
+                // groupValues[0] = "Name: John" (que é a frase toda)
+                // groupValues[1] = "John" (que é só o que estava dentro dos parênteses e o que queremos)
+                // por isso é que é pedido para fazer .get(1)
                 .addStatement("return match?.groupValues?.get(1)")
                 // isto faz com que seja esperado o return de uma string e o nullable é para aparecer
                 // o "?" porque pode ser null
