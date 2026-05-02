@@ -9,3 +9,4 @@ Regras:
 - A interface deve usar XML Views (não Jetpack Compose).
 - Não gerar ficheiros grandes de uma só vez.
 - Gerar código passo a passo seguindo o plano de implementação em docs/08_implementation_plan.md.
+- O módulo :app-compose usa exclusivamente Jetpack Compose. A regra de XML Views aplica-se apenas ao módulo :app.

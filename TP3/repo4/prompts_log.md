@@ -134,3 +134,8 @@ Resultado: README.md atualizado. Ícone de remover nos favoritos alterado para v
 Objetivo: Compilar o APK final polido
 Prompt utilizado: Compila o projeto e gera o APK final atualizado.
 Resultado: APK final polido (ícone vermelho e scroll auto) gerado com sucesso em: `app/build/outputs/apk/debug/app-debug.apk`. Erro de compilação no Fragment e conflito de ambiente com o `jlink` resolvidos durante o processo.
+
+## Prompt 27
+Objetivo: Atualizar agents.md para permitir Jetpack Compose no módulo :app-compose
+Prompt utilizado: Atualiza o ficheiro agents.md adicionando a seguinte regra: "O módulo :app-compose usa exclusivamente Jetpack Compose. A regra de XML Views aplica-se apenas ao módulo :app."
+Resultado: agents.md atualizado com nova regra para o módulo :app-compose.
