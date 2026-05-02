@@ -191,3 +191,8 @@ Prompt utilizado: Corrige os seguintes erros de compilação no módulo :app-com
 1. MainActivity.kt linha 25: @Composable invocations can only happen from the context of a @Composable function
 2. MainScreen.kt linhas 6 e 7: Unresolved reference 'Brightness4' e Unresolved reference 'Brightness7' — estes ícones não existem, substitui por ícones equivalentes disponíveis no androidx.compose.material.icons.Icons.
 Resultado: MainActivity.kt corrigido movendo isSystemInDarkTheme() para fora do bloco remember. MainScreen.kt corrigido substituindo Brightness4 e Brightness7 por Icons.Default.Settings e Icons.Default.CheckCircle.
+
+## Prompt 38
+Objetivo: Adicionar secção de informações da imagem no DetailScreen do :app-compose
+Prompt utilizado: No DetailScreen.kt do módulo :app-compose, adiciona a secção de informações da imagem com Ref ID, dimensões (largura x altura em px) e URL, semelhante ao que existe no módulo :app.
+Resultado: Card adicionado no DetailScreen.kt com Ref ID, dimensões e URL da imagem.

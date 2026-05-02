@@ -138,6 +138,45 @@ fun DetailScreen(
                     )
                     
                     Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = "Informação da Imagem",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Ref ID: ${catImage!!.id}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            val width = catImage!!.width ?: "?"
+                            val height = catImage!!.height ?: "?"
+                            Text(
+                                text = "Dimensões: $width x $height px",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "URL original:",
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = catImage!!.url,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     val breeds = catImage!!.breeds
                     if (!breeds.isNullOrEmpty()) {
