@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "MyGalleryApp"
 include(":app")
 include(":core")
+include(":app-compose")
