@@ -3,8 +3,8 @@ package dam.a51394.app_compose.ui.screens
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Brightness4
-import androidx.compose.material.icons.filled.Brightness7
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,7 +51,7 @@ fun MainScreen(
                     actions = {
                         IconButton(onClick = onToggleTheme) {
                             Icon(
-                                imageVector = if (isDarkTheme) Icons.Default.Brightness7 else Icons.Default.Brightness4,
+                                imageVector = if (isDarkTheme) Icons.Default.CheckCircle else Icons.Default.Settings,
                                 contentDescription = "Alternar Tema"
                             )
                         }

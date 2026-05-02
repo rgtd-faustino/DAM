@@ -184,3 +184,10 @@ Resultado: NavHost configurado no MainScreen.kt com rotas para gallery, favorite
 Objetivo: Gerar documentos finais (deliverables) do MIP-3
 Prompt utilizado: Lê todos os ficheiros em docs/ e o agents.md e gera os três documentos finais pedidos como deliverables: docs/10_module_diagram.md com o diagrama de dependências entre módulos, docs/11_ui_contract.md descrevendo como cada módulo de UI interage com o :core, e docs/12_refactoring_plan.md explicando o que foi extraído do projeto original (antes da refatoração multi-módulo) para o módulo :core.
 Resultado: Três documentos criados: 10_module_diagram.md com diagrama Mermaid, 11_ui_contract.md com contrato MVVM e StateFlow, 12_refactoring_plan.md com plano de refatoração detalhado.
+
+## Prompt 37
+Objetivo: Corrigir erros de compilação no módulo :app-compose
+Prompt utilizado: Corrige os seguintes erros de compilação no módulo :app-compose:
+1. MainActivity.kt linha 25: @Composable invocations can only happen from the context of a @Composable function
+2. MainScreen.kt linhas 6 e 7: Unresolved reference 'Brightness4' e Unresolved reference 'Brightness7' — estes ícones não existem, substitui por ícones equivalentes disponíveis no androidx.compose.material.icons.Icons.
+Resultado: MainActivity.kt corrigido movendo isSystemInDarkTheme() para fora do bloco remember. MainScreen.kt corrigido substituindo Brightness4 e Brightness7 por Icons.Default.Settings e Icons.Default.CheckCircle.

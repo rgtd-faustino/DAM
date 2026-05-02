@@ -22,7 +22,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var isDarkTheme by remember { mutableStateOf(isSystemInDarkTheme()) }
+            val systemTheme = isSystemInDarkTheme()
+            var isDarkTheme by remember { mutableStateOf(systemTheme) }
 
             MyGalleryAppTheme(darkTheme = isDarkTheme) {
                 MainScreen(
