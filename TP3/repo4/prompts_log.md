@@ -179,3 +179,8 @@ Resultado: MainScreen.kt criado com TopAppBar e botão sol/lua para alternar tem
 Objetivo: Implementar navegação com NavHost
 Prompt utilizado: Sim, avança para o Passo 8.
 Resultado: NavHost configurado no MainScreen.kt com rotas para gallery, favorites e detail. NavigationBar implementada com Bottom Navigation entre Galeria e Favoritos.
+
+## Prompt 36
+Objetivo: Gerar documentos finais (deliverables) do MIP-3
+Prompt utilizado: Lê todos os ficheiros em docs/ e o agents.md e gera os três documentos finais pedidos como deliverables: docs/10_module_diagram.md com o diagrama de dependências entre módulos, docs/11_ui_contract.md descrevendo como cada módulo de UI interage com o :core, e docs/12_refactoring_plan.md explicando o que foi extraído do projeto original (antes da refatoração multi-módulo) para o módulo :core.
+Resultado: Três documentos criados: 10_module_diagram.md com diagrama Mermaid, 11_ui_contract.md com contrato MVVM e StateFlow, 12_refactoring_plan.md com plano de refatoração detalhado.
