@@ -139,3 +139,43 @@ Resultado: APK final polido (ícone vermelho e scroll auto) gerado com sucesso e
 Objetivo: Atualizar agents.md para permitir Jetpack Compose no módulo :app-compose
 Prompt utilizado: Atualiza o ficheiro agents.md adicionando a seguinte regra: "O módulo :app-compose usa exclusivamente Jetpack Compose. A regra de XML Views aplica-se apenas ao módulo :app."
 Resultado: agents.md atualizado com nova regra para o módulo :app-compose.
+
+## Prompt 28
+Objetivo: Adicionar dependências ao app-compose/build.gradle.kts
+Prompt utilizado: Lê os ficheiros agents.md, docs/06_architecture.md, docs/08_implementation_plan.md e docs/09_feature_extensions.md e começa a implementar o módulo :app-compose passo a passo. Começa pelo Passo 1: adiciona as dependências necessárias ao app-compose/build.gradle.kts para Jetpack Compose, Coil, Navigation e pull-to-refresh.
+Resultado: Adicionadas dependências de Navigation Compose, Coil e Lifecycle Runtime Compose ao libs.versions.toml e app-compose/build.gradle.kts.
+
+## Prompt 29
+Objetivo: Criar GalleryViewModel e FavoritesViewModel com StateFlow
+Prompt utilizado: Sim, avança para o Passo 2.
+Resultado: GalleryViewModel.kt e FavoritesViewModel.kt criados com StateFlow para imagens, loading e erros.
+
+## Prompt 30
+Objetivo: Criar GalleryScreen com LazyVerticalGrid e AnimatedVisibility
+Prompt utilizado: Sim, avança para o Passo 3.
+Resultado: GalleryScreen.kt criado com LazyVerticalGrid adaptativo (2 colunas portrait, 3 landscape) e AnimatedVisibility com fadeIn/fadeOut nos cards.
+
+## Prompt 31
+Objetivo: Criar DetailScreen com pinch-to-zoom e animateContentSize
+Prompt utilizado: Sim, avança para o Passo 4.
+Resultado: DetailScreen.kt e DetailViewModel.kt criados com pinch-to-zoom na imagem e animateContentSize no card de raça.
+
+## Prompt 32
+Objetivo: Criar FavoritesScreen
+Prompt utilizado: Sim, avança para o Passo 5.
+Resultado: FavoritesScreen.kt criado com LazyVerticalGrid adaptativo, gestão de favoritos e mensagem quando lista vazia.
+
+## Prompt 33
+Objetivo: Implementar pull-to-refresh na GalleryScreen
+Prompt utilizado: Sim, avança para o Passo 6.
+Resultado: PullToRefreshBox do Material 3 integrado na GalleryScreen ligado ao estado isLoading e ao fetchImages().
+
+## Prompt 34
+Objetivo: Implementar Light/Dark mode toggle
+Prompt utilizado: Sim, avança para o Passo 7.
+Resultado: MainScreen.kt criado com TopAppBar e botão sol/lua para alternar tema em tempo real. MainActivity.kt atualizado.
+
+## Prompt 35
+Objetivo: Implementar navegação com NavHost
+Prompt utilizado: Sim, avança para o Passo 8.
+Resultado: NavHost configurado no MainScreen.kt com rotas para gallery, favorites e detail. NavigationBar implementada com Bottom Navigation entre Galeria e Favoritos.
