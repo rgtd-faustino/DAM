@@ -1,17 +1,44 @@
 # Extensões de Funcionalidades
 
 ## Extensão 1: Navegação por Bottom Navigation Bar
-Descrição: Adicionar uma barra de navegação inferior para navegar entre o ecrã principal e o ecrã de favoritos.
-Alterações de UI: Bottom Navigation Bar com dois separadores — Galeria e Favoritos.
+Descrição: Barra de navegação inferior entre Galeria e Favoritos.
+Módulos: :app (XML), :app-compose (NavHost)
 
 ## Extensão 2: Ecrã de Favoritos
-Descrição: Criar um ecrã dedicado que mostra as imagens marcadas como favoritas (máximo 5, FIFO).
-Alterações de UI: RecyclerView com as imagens favoritas e botão para remover cada uma.
+Descrição: Ecrã dedicado com imagens favoritas (máximo 5, FIFO).
+Módulos: :app (XML), :app-compose (Compose)
 
 ## Extensão 3: Remover dos Favoritos
-Descrição: Permitir ao utilizador remover uma imagem dos favoritos a partir do ecrã de favoritos ou do ecrã de detalhes.
-Alterações de UI: Botão de remover no ecrã de favoritos e atualização do botão no ecrã de detalhes.
+Descrição: Remover favoritos a partir do ecrã de favoritos ou detalhes.
+Módulos: :app (XML), :app-compose (Compose)
 
 ## Extensão 4: Melhorias Visuais
-Descrição: Melhorar o aspeto geral da app — cores, tipografia, espaçamentos e layout das imagens.
-Alterações de UI: Tema personalizado, cards com cantos arredondados, informação da imagem visível no ecrã de detalhes.
+Descrição: Tema personalizado, cards arredondados, layout melhorado.
+Módulos: :app (XML), :app-compose (MaterialTheme)
+
+---
+
+## Features Exclusivas do :app-compose
+
+### Feature 1: Animações (AnimatedVisibility + animateContentSize)
+Descrição: Cards de imagens aparecem e desaparecem com animação
+fadeIn/fadeOut durante o carregamento. O card de detalhes de raça
+expande/colapsa com animateContentSize ao carregar nele.
+Localização: GalleryScreen.kt, DetailScreen.kt
+
+### Feature 2: Dynamic Theming (Light/Dark mode)
+Descrição: A app suporta tema claro e escuro usando MaterialTheme.
+O utilizador pode alternar entre os dois modos dentro da app.
+Localização: Theme.kt, MainScreen.kt
+
+### Feature 3: Advanced Gestures (Pull-to-refresh + Pinch-to-zoom)
+Descrição: O utilizador pode puxar a lista para baixo para atualizar
+as imagens (pull-to-refresh). No ecrã de detalhes pode fazer
+pinch-to-zoom na imagem do gato.
+Localização: GalleryScreen.kt, DetailScreen.kt
+
+### Feature 4: Adaptive Layouts (LazyVerticalGrid)
+Descrição: Em modo portrait a galeria mostra 2 colunas. Em modo
+landscape mostra 3 colunas. Usa LazyVerticalGrid com
+GridCells.Adaptive para se adaptar ao tamanho do ecrã.
+Localização: GalleryScreen.kt

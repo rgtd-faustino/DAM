@@ -1,6 +1,15 @@
 # Arquitetura
 
-Padrão: MVVM
+Padrão: MVVM — Multi-módulo
 
-Camadas:
-Interface (Activity) → ViewModel → Repositório → Serviço de API
+## Módulos
+- :core — modelos de dados, API client, cache, favoritos, repositório
+- :app — UI em XML (Activities, Fragments, Adapters) + ViewModels
+- :app-compose — UI em Jetpack Compose + ViewModels
+
+## Dependências
+:app → :core
+:app-compose → :core
+
+## Fluxo de dados
+UI → ViewModel → Repository (core) → API / Cache
