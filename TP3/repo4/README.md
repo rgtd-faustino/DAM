@@ -1,111 +1,95 @@
-# Assignment 3 — My Cat Gallery App
+# Assignment 3 — MIP: My Cat Gallery App (Multi-módulo)
 
-**Course:** Desenvolvimento de Aplicações Móveis (DAM)  
-**Student:** A51394 Rafael Faustino  
-**Date:** 12/04/2026  
-**Repository URL:** [DAM_TP2_MIP](https://github.com/rgtd-faustino/DAM/edit/main/TP2/repo3/)
+**Course:** Desenvolvimento de Aplicações Móveis (DAM)
+**Student:** A51394 Rafael Faustino
+**Date:** 03/05/2026
+**Repository URL:** [DAM_TP3_MIP](https://github.com/rgtd-faustino/DAM/tree/main/TP3/repo4)
 
 ---
 
 ## High-Level Project Description
 
-A **My Cat Gallery App** é uma aplicação móvel para Android desenvolvida no âmbito da unidade curricular de DAM. A aplicação serve como uma montra digital e informativa de felinos, combinando a exploração visual de imagens aleatórias com a consulta de dados técnicos e biológicos sobre diferentes raças de gatos. O projeto foca-se na robustez técnica, utilizando carregamento assíncrono de dados, persistência local e uma arquitetura que garante a operacionalidade mesmo em condições de rede instáveis.
+A **My Cat Gallery App** é uma aplicação Android desenvolvida no âmbito da secção MIP-3 da unidade curricular de DAM. O projeto parte da versão anterior da galeria de gatos e evolui para uma arquitetura multi-módulo, onde a lógica de negócio e o acesso a dados ficam isolados num módulo partilhado (`:core`), consumido por dois módulos de interface distintos: um baseado em XML Views (`:app`) e outro construído exclusivamente em Jetpack Compose (`:app-compose`).
 
-### Application Purpose
+### Objetivo do Projeto
 
-O objetivo principal desta aplicação é demonstrar a integração de múltiplos serviços e bibliotecas num ecossistema Android moderno. A aplicação permite aos utilizadores:
-*   Descobrir novas imagens de gatos de forma dinâmica.
-*   Guardar os seus gatos favoritos num sistema de gestão persistente (FIFO).
-*   Aceder a informações detalhadas (raça, origem, temperamento) que transformam uma simples galeria numa ferramenta educativa.
-*   Garantir o acesso aos dados previamente visualizados através de um sistema de cache inteligente.
+O objetivo principal é demonstrar a separação rigorosa entre camadas de dados e camadas de interface, garantindo que ambas as UIs partilham o mesmo núcleo funcional sem duplicação de código. Em termos de funcionalidades, a aplicação mantém tudo o que foi construído anteriormente: galeria de imagens aleatórias, detalhes de cada gato com informação de raça, lista de favoritos com lógica FIFO e suporte a cache offline.
 
-### API Used
+### API Utilizada
 
-A aplicação consome a **[TheCatAPI](https://thecatapi.com/)**, uma API REST pública e poderosa que fornece:
-*   Milhares de imagens de gatos em alta resolução.
-*   Metadados detalhados sobre centenas de raças reconhecidas internacionalmente.
-*   Endpoints específicos para consulta de detalhes de imagens e raças individuais.
+A aplicação consome a **[TheCatAPI](https://thecatapi.com/)**, que fornece imagens de gatos em alta resolução e metadados sobre raças. A autenticação é feita por cabeçalho `x-api-key` em cada pedido, com a chave configurada de forma segura via `local.properties` e `BuildConfig`.
 
-A autenticação é gerida de forma segura através de uma chave de API injetada via `x-api-key` header em cada pedido.
-
----
-
-## Screenshots
-
-|          Galeria          |         Favoritos         |           Imagem Detalhes            |
-|:-------------------------:|:-------------------------:|:------------------------------------:|
-| ![Galeria](docs/screenshots/Favoritos.png) | ![Favoritos](docs/screenshots/Galeria.png) | ![Imagem Detalhes](docs/screenshots/MenuDetalhes.png) |
 ---
 
 ## 1. Introdução
 
-Este relatório descreve o desenvolvimento da "My Cat Gallery App", uma aplicação Android que permite explorar o vasto catálogo da TheCatAPI. O projeto representa a evolução final do primeiro conjunto de trabalhos práticos de DAM, focando-se na integração de APIs REST, persistência local de dados, e na aplicação de padrões de arquitetura modernos (MVVM) com bibliotecas consagradas como Retrofit e Glide.
+Este relatório descreve o desenvolvimento do exercício MIP-3 da unidade curricular de DAM, que consistiu em refatorar e expandir a My Cat Gallery App para uma arquitetura multi-módulo. A aplicação foi reorganizada em três módulos com responsabilidades separadas: `:core` para dados e lógica, `:app` para a interface em XML e `:app-compose` para a interface em Jetpack Compose.
 
-A aplicação foi desenhada para oferecer uma experiência de utilizador fluida, permitindo não só visualizar imagens aleatórias de gatos, mas também gerir uma lista de favoritos com persistência offline e consultar informações detalhadas sobre as raças de cada felino.
+O módulo `:app-compose` foi desenvolvido de raiz com funcionalidades exclusivas do Compose: animações com `AnimatedVisibility` e `animateContentSize`, tema claro e escuro com alternância em tempo real, pull-to-refresh na galeria, pinch-to-zoom no ecrã de detalhes e layout adaptativo com `LazyVerticalGrid`.
 
 ---
 
 ## 2. Visão Geral do Sistema
 
-A aplicação está organizada em torno de três eixos principais, acessíveis através de uma barra de navegação inferior (`BottomNavigationView`):
+O projeto está organizado em três módulos:
 
-- **Galeria (`GalleryFragment`)**: Apresenta uma grelha de imagens aleatórias obtidas em tempo real. Inclui um botão de atualização que recarrega os dados e realiza scroll automático para o topo da lista.
-- **Favoritos (`FavoritesFragment`)**: Exibe as imagens marcadas pelo utilizador. Utiliza uma lógica **FIFO (First-In, First-Out)**, permitindo no máximo 5 favoritos; ao adicionar o sexto, o mais antigo é removido automaticamente.
-- **Ecrã de Detalhes (`ImageDetailActivity`)**: Oferece uma vista detalhada da imagem, incluindo metadados técnicos (ID, dimensões em pixels) e uma "enciclopédia" sobre a raça, caso disponível (origem, temperamento, descrição e esperança de vida).
+- **`:core`** -- contém os modelos de dados (`CatImage`, `Breed`), o cliente de API (`CatApiService` com Retrofit), o repositório (`CatRepository`) e os gestores de persistência local (`CacheManager`, `FavoritesManager`). Não tem qualquer dependência de UI.
+- **`:app`** -- interface em XML com `GalleryFragment`, `FavoritesFragment` e `ImageDetailActivity`. Usa Glide para carregar imagens, `RecyclerView` com adaptadores e `BottomNavigationView` para navegação entre separadores. Os ViewModels usam `LiveData`.
+- **`:app-compose`** -- interface em Jetpack Compose com `GalleryScreen`, `FavoritesScreen` e `DetailScreen`. Usa Coil para carregar imagens, `NavHost` para navegação e `StateFlow` nos ViewModels. Inclui funcionalidades exclusivas que não existem no módulo `:app`.
 
-A aplicação inclui suporte para **modo offline**, servindo imagens a partir de uma cache local de 50 itens quando a ligação à internet falha.
+Ambos os módulos de UI dependem do `:core` e acedem aos dados exclusivamente através do `CatRepository`, que decide de forma transparente se serve os dados da rede ou da cache local.
 
 ---
 
 ## 3. Arquitetura e Design
 
-### Padrão MVVM (Model-View-ViewModel)
+### Multi-módulo e separação de responsabilidades
 
-A arquitetura foi estruturada para separar claramente a lógica de negócio da interface:
-- **`model`**: Classes de dados (`CatImage`, `Breed`) anotadas para desserialização JSON.
-- **`viewmodel`**: Gere o estado da UI e a comunicação com o repositório, expondo dados via `LiveData`.
-- **`repository`**: Única fonte de verdade para os dados, gerindo a alternância entre a API e a cache local.
+A refatoração para multi-módulo obrigou a isolar tudo o que não é interface no `:core`. O `CatRepository` passou a ser a única fonte de verdade para os dados, implementando a estratégia de fallback: tenta a rede e, em caso de falha, serve os dados da cache. O `FavoritesManager` e o `CacheManager` ficaram também no `:core`, garantindo que a lógica FIFO e os limites de 5 favoritos e 50 imagens em cache são aplicados da mesma forma em ambas as interfaces.
 
-### Gestão de Dados e Persistência
+### Módulo `:app` (XML)
 
-- **`FavoritesManager`**: Encapsula a lógica da fila FIFO. Os dados são persistidos em `SharedPreferences` em formato JSON através da biblioteca Gson. Esta escolha foi feita pela simplicidade e rapidez de implementação para uma lista pequena (5 itens).
-- **`CacheManager`**: Gere uma cache circular de 50 imagens para garantir que a aplicação apresenta conteúdo mesmo sem rede.
-- **`CatApiService`**: Interface Retrofit configurada para injetar a chave de API nos headers de cada pedido.
+O módulo XML mantém a estrutura de Fragments com `BottomNavigationView`. Os ViewModels usam `LiveData` e expõem os estados de carregamento, erro e dados. A navegação para o ecrã de detalhes é feita via `Intent` com extras.
 
-### Decisões de UI/UX
+### Módulo `:app-compose` (Jetpack Compose)
 
-- **Paleta de Cor e Tema**: Utilizou-se o Material Design 3 com cores Indigo e Amber, conferindo um aspeto moderno e profissional.
-- **Feedback Visual**: O botão de favoritos no ecrã de detalhes alterna dinamicamente entre "Adicionar" (Azul) e "Remover" (Vermelho), informando o utilizador sobre o estado atual do item.
-- **Scroll Automático**: Pequena melhoria de UX que garante que o utilizador vê sempre o novo conteúdo após uma atualização da galeria.
+O módulo Compose foi construído de raiz, com ViewModels que expõem `StateFlow` e composables que observam o estado com `collectAsStateWithLifecycle()`. A navegação é gerida por `NavHost` com rotas tipadas. As funcionalidades exclusivas do Compose implementadas foram:
+
+- **`AnimatedVisibility` com `fadeIn`/`fadeOut`** nos cards da galeria durante o carregamento.
+- **`animateContentSize`** no card de raça do ecrã de detalhes, que expande e colapsa ao toque.
+- **Light/Dark mode** com botão de alternância na `TopAppBar`, aplicado em tempo real via `MaterialTheme`.
+- **Pull-to-refresh** com `PullToRefreshBox` do Material 3 na galeria.
+- **Pinch-to-zoom** na imagem do ecrã de detalhes com `detectTransformGestures`.
+- **`LazyVerticalGrid` adaptativo** com 2 colunas em portrait e 3 em landscape.
 
 ---
 
 ## 4. Implementação
 
-### Integração com TheCatAPI
+### Módulo `:core`
 
-Para resolver o problema das dimensões em falta nos resultados da pesquisa geral, implementou-se uma chamada dedicada ao abrir o ecrã de detalhes:
-```kotlin
-// CatApiService.kt
-@GET("v1/images/{image_id}")
-suspend fun fetchCatImageDetail(@Path("image_id") id: String): CatImage
-```
-Isto permite obter o objeto completo com `width` e `height` reais, garantindo precisão na informação apresentada ao utilizador.
+O `CatRepository` é inicializado com um `Context` para aceder aos gestores de persistência. O `CatApiService` é uma interface Retrofit com dois endpoints: pesquisa de imagens com `has_breeds=1` e detalhe individual por ID. O `FavoritesManager` e o `CacheManager` usam `SharedPreferences` com serialização Gson.
 
-### Estrutura de Fragmentos
+### Módulo `:app`
 
-A `MainActivity` atua como contentor, trocando entre `GalleryFragment` e `FavoritesFragment` conforme a seleção na `BottomNavigationView`. Esta abordagem é mais eficiente em termos de memória do que usar múltiplas Activities para ecrãs principais.
+Os adaptadores `CatImageAdapter` e `FavoritesAdapter` usam `notifyDataSetChanged()` por simplicidade. Os fragmentos obtêm os ViewModels com `ViewModelProvider` e observam a `LiveData` para atualizar a interface. O `GalleryFragment` partilha o `MainViewModel` com a `Activity` para que os dados sobrevivam à navegação entre separadores.
+
+### Módulo `:app-compose`
+
+A `MainActivity` cria os três ViewModels com `by viewModels()` e passa-os ao `MainScreen`. O `NavHost` gere as rotas `gallery`, `favorites` e `detail/{imageId}`. A `TopAppBar` e a `NavigationBar` só aparecem nas rotas principais, desaparecendo no ecrã de detalhes. O `DetailScreen` usa `LaunchedEffect(imageId)` para disparar o pedido de detalhes à API quando o ecrã é aberto.
 
 ---
 
 ## 5. Testes e Validação
 
-Foram realizados testes manuais exaustivos cobrindo os seguintes cenários:
+A validação foi feita manualmente no emulador Android.
 
-- **Lógica FIFO**: Verificação de que ao adicionar o 6º favorito, o 1º desaparece do histórico e da persistência.
-- **Modo Offline**: Simulação de perda de ligação (Modo Avião) e verificação de que a aplicação carrega imagens da cache local com aviso de erro apropriado.
-- **Rotação de Ecrã**: O uso de ViewModels garante que os dados da galeria não são perdidos ao rodar o dispositivo.
-- **Formatação de Dados**: Validação da exibição de metadados de raças complexas e fallback para "Raça desconhecida" quando a API não fornece informação.
+- **Galeria e atualização**: confirmado que ao puxar para baixo (pull-to-refresh) ou ao abrir a aplicação as imagens são carregadas corretamente.
+- **Ecrã de detalhes**: verificado que as dimensões reais, o ID, o URL e a informação de raça aparecem corretamente após a chamada ao endpoint de detalhe.
+- **Favoritos FIFO**: testado adicionar o 6.º favorito e confirmar que o mais antigo é removido automaticamente.
+- **Cache offline**: simulado modo avião e verificado que a aplicação apresenta imagens da cache com mensagem de erro adequada.
+- **Animações e gestos**: verificado o fadeIn dos cards, a expansão do card de raça, o pinch-to-zoom e o pull-to-refresh no módulo Compose.
+- **Tema**: confirmada a alternância entre tema claro e escuro sem reiniciar a aplicação.
 
 ---
 
@@ -113,22 +97,44 @@ Foram realizados testes manuais exaustivos cobrindo os seguintes cenários:
 
 ### Pré-requisitos
 
-- Android Studio (Hedgehog ou superior)
-- SDK Android API 24 (Nougat) ou superior
+- Android Studio Hedgehog ou superior
+- Android SDK API 24+
 - Uma chave de API da [TheCatAPI](https://thecatapi.com/signup)
 
 ### Configuração
 
 1. Clonar o repositório.
-2. No ficheiro `local.properties` (raiz do projeto), adicionar a linha:
-   `CAT_API_KEY=a tua_chave_aqui`
+2. No ficheiro `local.properties` na raiz do projeto, adicionar:
+   `CAT_API_KEY=a_tua_chave_aqui`
 3. Sincronizar o projeto com o Gradle.
 
 ### Execução
 
-Compilar e correr no emulador ou dispositivo físico através do botão **Run** no Android Studio. Caso prefira a linha de comandos:
-```bash
-./gradlew installDebug
+Selecionar o módulo pretendido (`:app` ou `:app-compose`) no Android Studio e correr no emulador ou dispositivo com o botão Run.
+
+### Estrutura de módulos
+
+```
+MyCatGalleryApp/
+├── core/
+│   ├── api/
+│   │   └── CatApiService.kt
+│   ├── data/
+│   │   ├── CacheManager.kt
+│   │   └── FavoritesManager.kt
+│   ├── model/
+│   │   └── CatImage.kt
+│   └── repository/
+│       └── CatRepository.kt
+├── app/
+│   ├── adapter/
+│   ├── ui/
+│   └── viewmodel/
+└── app-compose/
+    ├── ui/
+    │   ├── screens/
+    │   └── theme/
+    └── viewmodel/
 ```
 
 ---
@@ -137,52 +143,54 @@ Compilar e correr no emulador ou dispositivo físico através do botão **Run** 
 
 ## 7. Prompting Strategy
 
-O desenvolvimento utilizou o agente de IA Antigravity (Google) em colaboração com o aluno. A estratégia de prompting seguiu uma estrutura rigorosa baseada no plano de implementação predefinido:
+O desenvolvimento utilizou o agente Gemini Pro fornecido pela aplicação Antigravity seguindo uma abordagem de planeamento primeiro. Antes de qualquer geração de código, foram criados os ficheiros de documentação em `/docs` com a arquitetura, o modelo de dados, os ecrãs, a navegação e o plano de implementação. O ficheiro `agents.md` definiu as regras que o agente devia seguir em cada módulo.
 
 | Componente | Descrição |
 |---|---|
-| Context | Contexto de desenvolvimento Android (Tutorial 2) e integração de APIs REST |
-| Goal | Criar uma galeria funcional com suporte a favoritos, cache offline e metadados de raças |
-| Constraints | MVVM, Retrofit, Glide, SharedPreferences/Gson, Lógica FIFO, Android API 24+ |
-| Plan | Seguimento estrito do `implementation_plan.md` em 15 passos fundamentais |
-| Verification | Testes no emulador, validação de tipos de dados e tratamento de exceções de rede |
-| Deliverables | Código Kotlin completo, layouts XML, recursos de UI e documentação técnica |
+| Context | Aplicação multi-módulo Android com `:core`, `:app` e `:app-compose` |
+| Goal | Refatorar a galeria de gatos para arquitetura multi-módulo com duas UIs distintas |
+| Constraints | MVVM, Retrofit, Glide/Coil, SharedPreferences/Gson, FIFO, API 24+, XML no `:app`, Compose no `:app-compose` |
+| Plan | Seguimento do `08_implementation_plan.md` passo a passo por módulo |
+| Verification | Compilação após cada passo, testes no emulador |
+| Deliverables | Código Kotlin, layouts, documentação e três ficheiros de entrega finais |
 
 ---
 
 ## 8. Autonomous Agent Workflow
 
-O agente Antigravity contribuiu ativamente em todas as fases do desenvolvimento, identificando e corrigindo problemas de forma autónoma:
+O agente Antigravity foi usado ao longo de 38 prompts distribuídos pelas três fases do projeto: módulo `:core`, módulo `:app` e módulo `:app-compose`.
 
-**Planeamento e Implementação:**  
-O agente geriu a criação da estrutura de pacotes, implementação do repositório com estratégia de fallback para cache e orquestração dos ViewModels com LiveData.
+**Planeamento:**
+O aluno criou os ficheiros de documentação antes de começar a gerar código. O agente foi instruído a ler sempre esses ficheiros antes de gerar qualquer ficheiro.
 
-**Debugging Autónomo:**  
-Identificou e corrigiu os seguintes problemas durante o processo:
+**Implementação:**
+O agente geriu a criação dos três módulos de forma incremental, seguindo o plano passo a passo. O módulo `:core` foi implementado primeiro para garantir que ambas as UIs podiam depender dele desde o início.
+
+**Debugging autónomo:**
+O agente identificou e corrigiu os seguintes problemas:
 
 | Problema | Solução |
 |---|---|
-| Dimensões 0x0 no ecrã de detalhes | Implementação de endpoint de detalhe individual na API |
-| Imagens não carregavam via HTTP | Ativação de `usesCleartextTraffic` e erro de fallback no Glide |
-| Conflitos de ambiente com `jlink` | Execução de `clean` e ajuste para JDK 25 |
-| Scroll não resetava ao atualizar | Implementação de `smoothScrollToPosition(0)` no observer da galeria |
-| Erro de compilação em Fragmentos | Correção manual de sintaxe e importações no `MainActivity` |
+| Ícones `Brightness4` e `Brightness7` inexistentes no Compose | Substituição por `Icons.Default.Settings` e `Icons.Default.CheckCircle` |
+| `isSystemInDarkTheme()` chamado fora de contexto `@Composable` | Movido para fora do bloco `remember` |
+| Conflitos de ambiente com `jlink` | Execução de `clean` e ajuste do JDK |
 
-**Intervenção Humana:**
-- Definição da lógica FIFO e limites de cache (5 e 50 itens respetivamente).
-- Escolha da paleta de cores Indigo/Amber para o tema premium.
-- Instrução específica para esconder a API key em `local.properties`.
-- Pedido de melhoria visual: ícone de remoção de favoritos em cor vermelha.
+**Intervenção humana:**
+- Definição da arquitetura multi-módulo e das regras do `agents.md`.
+- Criação de toda a documentação em `/docs` antes de gerar código.
+- Decisão das funcionalidades exclusivas do módulo Compose.
+- Aprovação de cada passo antes de avançar para o seguinte.
+- Reporte dos erros de compilação ao agente com contexto suficiente para os resolver.
 
 ---
 
 ## 9. Verification of AI-Generated Artifacts
 
 O código gerado foi verificado através de:
-- **Análise Estática**: Revisão do código para garantir a conformidade com as boas práticas de Kotlin e MVVM.
-- **Testes Funcionais**: Validação manual no emulador Pixel 3a (API 37).
-- **Simulação de Erros**: Forçar falhas de rede para validar a transição suave para o modo offline e mensagens de erro amigáveis.
-- **Persistência**: Reiniciar a aplicação para confirmar que os favoritos FIFO e as configurações de cache se mantêm entre sessões.
+
+- **Compilação incremental**: cada módulo foi compilado após cada passo do plano para detetar erros cedo.
+- **Testes funcionais**: validação manual de todas as funcionalidades em emulador Android.
+- **Revisão dos deliverables**: os três ficheiros finais (`10_module_diagram.md`, `11_ui_contract.md`, `12_refactoring_plan.md`) foram revistos pelo aluno para garantir que refletem com rigor a arquitetura implementada.
 
 ---
 
@@ -190,21 +198,25 @@ O código gerado foi verificado através de:
 
 | Área | Responsável |
 |---|---|
-| Arquitetura (MVVM), Repositório, Implementação Retrofit/Glide | IA (Antigravity) |
-| Lógica FIFO e Gestão de Cache | IA (com parâmetros Humanos) |
-| Design de Layouts XML e Temas | Humano (com execução da IA) |
-| Configuração de Segurança (BuildConfig/local.properties) | Humano (com execução da IA) |
-| Testes e Garantia de Qualidade | Humano |
-| Elaboração do Relatório Final | Humano (com assistência da IA) |
+| Documentação de planeamento (`/docs`) | Humano |
+| Regras do agente (`agents.md`) | Humano |
+| Módulo `:core` (modelos, API, repositório, cache, favoritos) | IA (Antigravity) |
+| Módulo `:app` (fragments, adapters, viewmodels XML) | IA (Antigravity) |
+| Módulo `:app-compose` (screens, viewmodels, navegação, tema) | IA (Antigravity) |
+| Correção de erros de compilação | IA (com reporte humano) |
+| Testes e validação | Humano |
+| Deliverables finais (módulo diagram, UI contract, refactoring plan) | IA (com revisão humana) |
+| Elaboração do relatório | Humano (com assistência da IA) |
 
 ---
 
 ## 11. Ethical and Responsible Use
 
-O uso de IA neste projeto foi pautado pela transparência e responsabilidade técnica:
-- **Risco de Alucinação**: Cada snippet de código gerado foi testado imediatamente no Android Studio para garantir funcionalidade.
-- **Propriedade Intelectual**: A IA foi utilizada como um par de programação (Pair Programming), onde as decisões arquiteturais e os requisitos de negócio emanaram do aluno.
-- **Segurança**: Garantiu-se que segredos como a API Key nunca seriam expostos ou processados de forma insegura pela IA em ficheiros públicos.
+O uso de IA neste projeto seguiu as regras definidas no enunciado e no `agents.md`. Os principais cuidados foram:
+
+- **Planeamento antes do código**: o agente só gerou código depois de toda a documentação estar definida, o que reduziu inconsistências e retrabalho.
+- **Validação funcional**: cada ficheiro gerado foi compilado e testado antes de avançar para o passo seguinte.
+- **Segurança**: a chave de API nunca foi incluída em ficheiros de código, ficando sempre isolada no `local.properties`.
 
 ---
 
@@ -212,37 +224,28 @@ O uso de IA neste projeto foi pautado pela transparência e responsabilidade té
 
 ## 12. Version Control and Commit History
 
-O histórico de commits reflete uma abordagem incremental por funcionalidade. Iniciou-se com o "core" da aplicação (API/Repository), seguido pela UI baseada em Activities, e finalmente a transição para Fragmentos com Bottom Navigation e polimento visual premium.
+O projeto foi desenvolvido de forma incremental, com commits por módulo. A ordem de implementação foi: `:core` primeiro, depois `:app`, e por fim `:app-compose`, o que garantiu que a base estava estável antes de construir as interfaces em cima dela.
 
 ---
 
 ## 13. Difficulties and Lessons Learned
 
-### Conceitos Técnicos Esclarecidos
-
-- **Lógica FIFO em Persistência**: Aprendeu-se como gerir uma fila circular usando `MutableList` e Gson. A importância de remover o item 0 ao atingir o limite de 5 itens para garantir que o utilizador tem sempre os conteúdos mais recentes.
-- **Segurança via local.properties**: Compreendeu-se o fluxo desde a variável local até à sua injeção no `BuildConfig` e posterior uso no `Interceptor` ou headers do Retrofit.
-- **K-Anonimato vs Privacidade (Analogia)**: Embora o projeto não utilize hashes complexos como o VaultGuard (exemplo anterior), a prática de enviar apenas o ID da imagem para obter detalhes reflete o princípio de minimização de dados enviados em cada transação API.
-
-### Dificuldades Superadas
-
-- **Ambiente de Compilação**: O erro `Execution failed for task ':app:jlink'` foi um desafio que exigiu a limpeza do diretório `.gradle` e a configuração correta do Java Home, demonstrando que o ambiente Android pode ser sensível a versões de ferramentas de build.
-- **Navegação com Fragmentos**: A gestão de fragmentos e a manutenção do estado da UI ao alternar entre separadores exigiu a utilização correta do `FragmentManager` e a preservação de dados nos ViewModels.
+A principal dificuldade encontrada foi que, na primeira versão do ecrã de detalhes, nem toda a informação disponível sobre o gato aparecia logo de início. Ao abrir o ecrã, apenas parte dos dados era mostrada, e a informação completa de raça, dimensões e ID só ficava visível depois de clicar na imagem ou interagir com o ecrã. O problema estava na ordem em que os dados eram carregados e no momento em que os composables eram desenhados em relação ao `StateFlow`. A solução passou por garantir que o `LaunchedEffect` disparava o pedido à API imediatamente ao abrir o ecrã e que todos os campos do card de informação aguardavam os dados antes de tentar mostrá-los.
 
 ---
 
 ## 14. Future Improvements
 
-- **Migração para Room**: Substituir SharedPreferences por uma base de dados estruturada para gerir favoritos com mais metadados.
-- **Partilha Social**: Implementar o Intent de partilha para enviar imagens de gatos diretamente para outras apps.
-- **Filtros Avançados**: Adicionar suporte para filtrar gatos por raça ou categorias (chapéus, caixas, etc.) fornecidas pela API.
+- **Persistência com Room**: substituir o `SharedPreferences` no `FavoritesManager` por uma base de dados Room para suportar mais metadados e pesquisa por raça.
+- **Paginação**: implementar `Paging 3` para carregar imagens de forma mais eficiente em lotes, em vez de um número fixo por pedido.
+- **Testes automatizados**: adicionar testes unitários ao `CatRepository` e testes de composable com `ComposeTestRule`.
 
 ---
 
 ## 15. AI Usage Disclosure
 
-**Código: [AC YES, AI YES]**  
-Este projeto foi desenvolvido com assistência extensiva da IA Antigravity (Google). O aluno orientou o desenvolvimento através de 26 prompts detalhados, revendo cada entrega e corrigindo rumos de implementação. Todo o código foi validado funcionalmente pelo aluno.
+**Código: [AC YES, AI YES]**
+Este projeto foi desenvolvido com assistência extensiva da IA Gemini Pro fornecida pela aplicação Antigravity. O aluno orientou o desenvolvimento através de 38 prompts estruturados (no total), revendo cada passo e validando funcionalmente o código gerado.
 
-**Relatório: [AC YES, AI YES]**  
-A redação e estruturação deste relatório foi assistida pelo modelo **Antigravity**. O aluno é totalmente responsável pelo conteúdo apresentado e confirma que o mesmo reflete com rigor o trabalho desenvolvido.
+**Relatório: [AC YES, AI YES]**
+A redação e estruturação deste relatório foi assistida pelo modelo **Claude (Anthropic)**. O aluno é totalmente responsável pelo conteúdo apresentado e confirma que o mesmo reflete com rigor o trabalho desenvolvido.

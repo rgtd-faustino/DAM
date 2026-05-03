@@ -2,8 +2,8 @@
 
 ```mermaid
 graph TD
-    A[:app (XML Views)] --> C[:core]
-    B[:app-compose (Jetpack Compose)] --> C[:core]
+    A[":app (XML Views)"] --> C[":core"]
+    B[":app-compose (Jetpack Compose)"] --> C[":core"]
     
     classDef ui fill:#4CAF50,stroke:#388E3C,stroke-width:2px,color:white;
     classDef core fill:#2196F3,stroke:#1976D2,stroke-width:2px,color:white;
