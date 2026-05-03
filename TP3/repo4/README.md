@@ -1,8 +1,8 @@
-# Assignment 3 — MIP: My Cat Gallery App (Multi-módulo)
+# Assignment 4 — MIP: My Cat Gallery App (Multi-módulo)
 
-**Course:** Desenvolvimento de Aplicações Móveis (DAM)
-**Student:** A51394 Rafael Faustino
-**Date:** 03/05/2026
+**Course:** Desenvolvimento de Aplicações Móveis (DAM)  
+**Student:** A51394 Rafael Faustino  
+**Date:** 03/05/2026  
 **Repository URL:** [DAM_TP3_MIP](https://github.com/rgtd-faustino/DAM/tree/main/TP3/repo4)
 
 ---

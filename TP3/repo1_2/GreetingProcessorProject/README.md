@@ -1,4 +1,4 @@
-# Assignment 3 — Annotation Processor
+# Assignment 1 & 2 — Annotation Processor
 
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
