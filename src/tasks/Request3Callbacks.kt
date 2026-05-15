@@ -12,15 +12,24 @@ fun loadContributorsCallbacks(service: GitHubService, req: RequestData, updateRe
         logRepos(req, responseRepos)
         val repos = responseRepos.bodyList()
         val allUsers = mutableListOf<User>()
+        var countDown = repos.size
         for (repo in repos) {
             service.getRepoContributorsCall(req.org, repo.name).onResponse { responseUsers ->
                 logUsers(repo, responseUsers)
                 val users = responseUsers.bodyList()
                 allUsers += users
+                countDown--
+                if (countDown == 0) {
+                    updateResults(allUsers.aggregate())
+                }
             }
         }
         // TODO: Why this code doesn't work? How to fix that?
-        updateResults(allUsers.aggregate())
+        // isto não vai funcionar porque a chamada dentro do loop para adicionar os users à lista é feita de modo
+        // assíncrono e uma vez que metemos cada repo a ser assíncrono o loop acaba e depois chamamos esta função
+        // para dar update e vai estar vazia, então a maneira que arranjamos isot é que só damos update dos resultados
+        // quando soubermos que já percorremos o loop inteiro com um simples contador
+        //updateResults(allUsers.aggregate())
     }
 }
 
