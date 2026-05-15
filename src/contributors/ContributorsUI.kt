@@ -10,6 +10,9 @@ import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import javax.swing.*
 import javax.swing.table.DefaultTableModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 private val INSETS = Insets(3, 10, 3, 10)
 private val COLUMNS = arrayOf("Login", "Contributions")
@@ -34,7 +37,32 @@ class ContributorsUI : JFrame("GitHub Contributors"), Contributors {
 
     override val job = Job()
 
+    // o _loadingState é mutável e privado, apenas esta classe é que pode escrever nele
+    // o loadingState é a versão pública e imutável que as outras classes podem observar (mas não alterar)
+    private val _loadingState = MutableStateFlow(Contributors.LoadingStateData())
+    override val loadingState: StateFlow<Contributors.LoadingStateData> = _loadingState.asStateFlow()
+
+    // em vez de chamar setLoadingStatus diretamente agora usamos um coletor do StateFlow
+    // que reage automaticamente a mudanças de estado
+    override fun observeLoadingStatus() {
+        launch {
+            loadingState.collect { status ->
+                val text = "Loading status: " + when (status.status) {
+                    Contributors.LoadingStatus.COMPLETED -> "completed in ${status.elapsedTime}"
+                    Contributors.LoadingStatus.IN_PROGRESS -> "in progress ${status.elapsedTime}"
+                    Contributors.LoadingStatus.CANCELED -> "canceled"
+                    Contributors.LoadingStatus.INIT -> "init"
+                }
+                loadingStatus.text = text
+                loadingStatus.icon = if (status.status == Contributors.LoadingStatus.IN_PROGRESS) loadingIcon else null
+            }
+        }
+    }
+
     init {
+        // chamamos o coletor do flow antes de construir a UI para não perder nenhum estado
+        observeLoadingStatus()
+
         // Create UI
         rootPane.contentPane = JPanel(GridBagLayout()).apply {
             addLabeled("GitHub Username", username)
@@ -58,6 +86,13 @@ class ContributorsUI : JFrame("GitHub Contributors"), Contributors {
         init()
     }
 
+    // em vez de atualizar a UI diretamente aqui metemos o novo estado no StateFlow para que o coletor em
+    // observeLoadingStatus() trate do resto, assim este método não precisa de saber nada sobre a UI,
+    // só emite o estado novo
+    override fun updateLoadingStatus(newStatus: Contributors.LoadingStateData) {
+        _loadingState.value = newStatus
+    }
+
     override fun getSelectedVariant(): Variant = variant.getItemAt(variant.selectedIndex)
 
     override fun updateContributors(users: List<User>) {
@@ -72,10 +107,12 @@ class ContributorsUI : JFrame("GitHub Contributors"), Contributors {
         }.toTypedArray(), COLUMNS)
     }
 
-    override fun setLoadingStatus(text: String, iconRunning: Boolean) {
+    // o setLoadingStatus foi removido porque a atualização da UI é agora feita pelo StateFlow
+    // no observeLoadingStatus()
+    /*override fun setLoadingStatus(text: String, iconRunning: Boolean) {
         loadingStatus.text = text
         loadingStatus.icon = if (iconRunning) loadingIcon else null
-    }
+    }*/
 
     override fun addCancelListener(listener: ActionListener) {
         cancel.addActionListener(listener)

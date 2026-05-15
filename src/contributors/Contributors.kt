@@ -3,6 +3,7 @@ package contributors
 import contributors.Contributors.LoadingStatus.*
 import contributors.Variant.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.StateFlow
 import tasks.*
 import java.awt.event.ActionListener
 import javax.swing.SwingUtilities
@@ -23,9 +24,17 @@ enum class Variant {
 interface Contributors: CoroutineScope {
 
     val job: Job
+    val loadingState: StateFlow<LoadingStateData>
 
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
+
+    private fun calculateElapsedTime(startTime: Long): String {
+        val time = System.currentTimeMillis() - startTime
+        return "${(time / 1000)}.${time % 1000 / 100} sec"
+    }
+
+    fun updateLoadingStatus(newStatus: LoadingStateData)
 
     fun init() {
         // Start a new loading on 'load' click
@@ -111,11 +120,21 @@ interface Contributors: CoroutineScope {
         }
     }
 
-    private enum class LoadingStatus { COMPLETED, CANCELED, IN_PROGRESS }
+    // adicionámos o INIT para mostrar uma mensagem inicial antes de qualquer pedido ser feito
+    private enum class LoadingStatus { INIT, COMPLETED, CANCELED, IN_PROGRESS }
+
+    // em vez de passar strings e booleans separados para atualizar o estado, agrupamos
+    // tudo numa data class para que cada emissão no StateFlow possa carregar toda a informação
+    // necessária para a UI atualizar
+    data class LoadingStateData (
+        val status : LoadingStatus = LoadingStatus.INIT ,
+        val startTime : Long ? = null ,
+        val elapsedTime : String = ""
+    )
 
     private fun clearResults() {
         updateContributors(listOf())
-        updateLoadingStatus(IN_PROGRESS)
+        updateLoadingStatus(LoadingStateData(status = IN_PROGRESS))
         setActionsStatus(newLoadingEnabled = false)
     }
 
@@ -125,13 +144,17 @@ interface Contributors: CoroutineScope {
         completed: Boolean = true
     ) {
         updateContributors(users)
-        updateLoadingStatus(if (completed) COMPLETED else IN_PROGRESS, startTime)
+        val status = if (completed) COMPLETED else IN_PROGRESS
+        val elapsedTime = calculateElapsedTime(startTime)
+        updateLoadingStatus(LoadingStateData(status = status, startTime = startTime, elapsedTime = elapsedTime))
         if (completed) {
             setActionsStatus(newLoadingEnabled = true)
         }
     }
 
-    private fun updateLoadingStatus(
+    // este método foi substituído pelo novo updateLoadingStatus(LoadingStateData) que manda para o StateFlow em
+    // vez de chamar o setLoadingStatus diretamente
+    /*private fun updateLoadingStatus(
         status: LoadingStatus,
         startTime: Long? = null
     ) {
@@ -147,7 +170,7 @@ interface Contributors: CoroutineScope {
                     CANCELED -> "canceled"
                 }
         setLoadingStatus(text, status == IN_PROGRESS)
-    }
+    }*/
 
     private fun Job.setUpCancellation() {
         // make active the 'cancel' button
@@ -158,7 +181,9 @@ interface Contributors: CoroutineScope {
         // cancel the loading job if the 'cancel' button was clicked
         val listener = ActionListener {
             loadingJob.cancel()
-            updateLoadingStatus(CANCELED)
+            // antes chamávamos setLoadingStatus diretamente com uma string, mas agora fazemos um LoadingStateData para
+            // o StateFlow, assim  o coletor em observeLoadingStatus() atualiza a UI sempre que há alguma mudança
+            updateLoadingStatus(LoadingStateData(status = CANCELED))
         }
         addCancelListener(listener)
 
@@ -169,6 +194,11 @@ interface Contributors: CoroutineScope {
             removeCancelListener(listener)
         }
     }
+
+    // este método é necessário na interface para que o ContributorsUI o possa sobrescrever
+    // é aqui que iniciamos o "listener" do StateFlow para quando o estado muda a UI possa ser atualizada automaticamente
+    // em vez de termos de chamar setLoadingStatus manualmente
+    fun observeLoadingStatus()
 
     fun loadInitialParams() {
         setParams(loadStoredParams())
@@ -188,7 +218,8 @@ interface Contributors: CoroutineScope {
 
     fun updateContributors(users: List<User>)
 
-    fun setLoadingStatus(text: String, iconRunning: Boolean)
+    // setLoadingStatus foi removido da interface porque a UI é agora atualizada pelo StateFlow
+    /*fun setLoadingStatus(text: String, iconRunning: Boolean)*/
 
     fun setActionsStatus(newLoadingEnabled: Boolean, cancellationEnabled: Boolean = false)
 
