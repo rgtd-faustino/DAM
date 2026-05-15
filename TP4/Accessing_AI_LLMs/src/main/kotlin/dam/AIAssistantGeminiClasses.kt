@@ -46,6 +46,9 @@ class AIAssistantGeminiClasses(override val properties: Properties) : AIAssistan
         val generationConfig: GenerationConfig? = null
     )
 
+    // tive de trocar a ordem da temperature e maxoutputtokens porque quando ciravamos um objeto desta classe
+    // com os parametros (temp, max) em vez de ficarem esses atributos da classe com os valores dos parametros
+    // estava a ficar a temp correta mas depois o topK é que ficava com o max
     data class GenerationConfig(
         val temperature: Double? = 0.4,      // Default reasonable balance
         val maxOutputTokens: Int? = 800,     // Controls response length
