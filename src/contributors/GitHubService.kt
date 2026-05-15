@@ -25,6 +25,10 @@ interface GitHubService {
         @Path("repo") repo: String
     ): Call<List<User>>
 
+    // tive de adicionar isto porque estava a dar erro ao fazer o exercício Request4Suspend porque
+    // o Retrofit precisa de funções suspend declaradas explicitamente na interface para poder
+    // fazer pedidos HTTP sem bloquear a thread e as versões Call<T> existentes só funcionam
+    // com .execute() ou .enqueue() (os callbacks)
     @GET("orgs/{org}/repos?per_page=100")
     suspend fun getOrgRepos(
         @Path("org") org: String

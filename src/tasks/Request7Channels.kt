@@ -41,8 +41,6 @@ suspend fun loadContributorsChannels(
     repeat(repos.size) {
         val users = channel.receive()
         allUsers = (allUsers + users).aggregate()
-        // Atualizamos a UI com os resultados acumulados.
-        // O segundo argumento é true apenas quando recebemos o último repo.
         updateResults(allUsers, it == repos.lastIndex)
     }
 }

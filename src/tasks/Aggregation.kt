@@ -14,17 +14,23 @@ TODO: Write aggregation code.
  The corresponding test can be found in test/tasks/AggregationKtTest.kt.
  You can use 'Navigate | Test' menu action (note the shortcut) to navigate to the test.
 */
+
 /*
+para visualizar:
+
 group
 "alice" -> [User("alice", 10), User("alice", 5)]
 "bob"   -> [User("bob", 3)]
+
 map
-User("alice", 15)  // 10 + 5
+User("alice", 15) // 10 + 5
 User("bob", 3)
+
 sort
-User("alice", 15)  // primeiro
-User("bob", 3)     // segundo
+User("alice", 15) // primeiro
+User("bob", 3) // segundo
 */
+
 fun List<User>.aggregate(): List<User> =
     // agrupa os utilizadores pelos nomes em grupos
     groupBy { it.login }
