@@ -119,9 +119,10 @@ interface AIAssistant {
     // adicionalmente forçamos o modelo a responder exatamente num formato de JSON com uma pontuação que vai de 1 a 7
     // e mostra também uma justificação para a avaliação escolhida
     suspend fun analyzeSentiment(input: String): String {
+        // usamos tres aspas porque assim os parágrafos sao feitos automaticamente e é mais fácil
         val prompt = """
         Analyze the sentiment of the text below and reply only with a JSON object.
-        Do not add any extra text, explanation or markdown outside the JSON.
+        Do not add any extra text outside the JSON.
 
         Use this exact format:
         {
