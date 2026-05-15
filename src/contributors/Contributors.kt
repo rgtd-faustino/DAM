@@ -109,8 +109,29 @@ interface Contributors: CoroutineScope {
                 }.setUpCancellation()
             }
             CHANNELS -> {  // Performing requests concurrently and showing progress
+                // o código antigo chamava updateResults diretamente no callback do loadContributorsChannels
+                // o problema é que a UI podia não conseguir acompanhar a velocidade dos updates e não havia forma de
+                // controlar isso, então agora metemos um canal no meio (progressChannel) que faz de buffer entre
+                // quem produz os dados e quem atualiza a UI
                 launch(Dispatchers.Default) {
-                    loadContributorsChannels(service, req) { users, completed ->
+                    // o Channel.BUFFERED permite que o produtor (loadContributorsChannels, é ele que apanha os dados
+                    // através da API) continue a enviar dados mesmo que o consumidor (a UI que depois lê os valores)
+                    // ainda esteja a processar o update anterior
+                    val progressChannel = Channel<Pair<List<User>, Boolean>>(Channel.BUFFERED)
+
+                    // esta coroutine carrega os dados e manda para o progressChannel, quando termina fecha o canal
+                    // para que o for loop abaixo saiba que acabou
+                    launch(Dispatchers.Default) {
+                        loadContributorsChannels(service, req) { users, completed ->
+                            progressChannel.send(Pair(users, completed))
+                        }
+                        // fechamos o canal para libertar recursos
+                        progressChannel.close()
+                    }
+
+                    // esta parte lê do progressChannel e atualiza a UI, o for loop suspende automaticamente enquanto
+                    // o canal está vazio e termina automaticamente quando o canal é fechado
+                    for ((users, completed) in progressChannel) {
                         withContext(Dispatchers.Main) {
                             updateResults(users, startTime, completed)
                         }
