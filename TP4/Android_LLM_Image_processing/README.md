@@ -3,7 +3,7 @@
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
 **Date:** 24/05/2026  
-**Repository URL:** DAM_TP4_LLM
+**Repository URL:** [DAM_TP4_Android_LLM_Image_Processing](https://github.com/rgtd-faustino/DAM/tree/main/TP4/Android_LLM_Image_processing)
 
 ---
 
