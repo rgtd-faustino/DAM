@@ -3,7 +3,7 @@
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
 **Date:** 24/05/2026  
-**Repository URL:** DAM_TP4_Kotlin
+**Repository URL:** [DAM_TP4_Accessing_AI_LLMs](https://github.com/rgtd-faustino/DAM/edit/main/TP4/Accessing_AI_LLMs/)
 
 ---
 
