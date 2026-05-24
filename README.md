@@ -1,8 +1,8 @@
-# Assignment 4 — Kotlin Flows & Coroutines
+# Assignment — Kotlin Flows & Coroutines
 
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
-**Date:** 17/05/2026  
+**Date:** 24/05/2026  
 **Repository URL:** DAM_TP4
 
 ---
