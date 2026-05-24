@@ -46,7 +46,12 @@ class NoteAdapter(options: FirestoreRecyclerOptions<Note>, val context: Context)
             }
         } else {
             // nota normal ou já desbloqueada: comportamento normal
-            holder.lockTextView.visibility = View.GONE
+            if (note.unlockDate != null) {
+                holder.lockTextView.visibility = View.VISIBLE
+                holder.lockTextView.text = "Abriu em ${Utility.timestampToString(note.unlockDate)}"
+            } else {
+                holder.lockTextView.visibility = View.GONE
+            }
             holder.titleTextView.alpha = 1f
             holder.contentTextView.visibility = View.VISIBLE
             holder.contentTextView.alpha = 1f

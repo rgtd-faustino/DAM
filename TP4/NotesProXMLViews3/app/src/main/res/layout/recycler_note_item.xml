@@ -25,6 +25,8 @@
         android:maxLines="2"
         android:ellipsize="end"
         android:textSize="17sp"
+        android:textColor="@color/black"
+        android:visibility="visible"
         android:layout_marginVertical="4dp"/>
 
     <!-- thumbnail da imagem da nota na lista, começa invisível porque nem todas as notas têm imagem,
