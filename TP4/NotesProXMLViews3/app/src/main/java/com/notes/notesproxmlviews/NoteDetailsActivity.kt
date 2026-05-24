@@ -25,6 +25,11 @@ class NoteDetailsActivity : AppCompatActivity() {
     // mostra a imagem escolhida ou já guardada na nota
     var noteImageView: android.widget.ImageView? = null
     var addImageBtn: TextView? = null // abre a galeria
+    // botão para bloquear a nota e texto que mostra a data escolhida
+    var lockNoteBtn: TextView? = null
+    var lockDateTextView: TextView? = null
+    // guarda a data de desbloqueio escolhida pelo utilizador, null significa sem bloqueio
+    var selectedUnlockDate: java.util.Date? = null
     // guarda o URI local da imagem que o utilizador escolheu da galeria, antes de fazer upload
     // o URI é basicamente o endereço do ficheiro no telemóvel (ex: content://media/external/images/...)
     var selectedImageUri: android.net.Uri? = null
@@ -87,9 +92,39 @@ class NoteDetailsActivity : AppCompatActivity() {
         }
 
         // quando o utilizador clica no botão de adicionar imagem abrimos a galeria
-        // o "image/*" diz ao android para mostrar apenas ficheiros de imagem
         addImageBtn!!.setOnClickListener {
             pickImageLauncher.launch("image/*")
+        }
+
+        lockNoteBtn = findViewById(R.id.lock_note_btn)
+        lockDateTextView = findViewById(R.id.lock_date_text_view)
+
+        // se a nota já tinha uma data de desbloqueio guardada mostramo-la ao abrir
+        val existingUnlockSeconds = intent.getLongExtra("unlockDate", -1L)
+        if (existingUnlockSeconds != -1L) {
+            selectedUnlockDate = java.util.Date(existingUnlockSeconds * 1000)
+            lockDateTextView!!.text = "Abre em: ${java.text.SimpleDateFormat("dd/MM/yyyy").format(selectedUnlockDate)}"
+            lockDateTextView!!.visibility = View.VISIBLE
+        }
+
+        // ao clicar no botão abrimos um date picker para o utilizador escolher a data de desbloqueio
+        lockNoteBtn!!.setOnClickListener {
+            val calendar = java.util.Calendar.getInstance()
+            android.app.DatePickerDialog(
+                this,
+                { _, year, month, day ->
+                    calendar.set(year, month, day, 23, 59, 59)
+                    selectedUnlockDate = calendar.time
+                    lockDateTextView!!.text = "Abre em: ${java.text.SimpleDateFormat("dd/MM/yyyy").format(selectedUnlockDate)}"
+                    lockDateTextView!!.visibility = View.VISIBLE
+                },
+                calendar.get(java.util.Calendar.YEAR),
+                calendar.get(java.util.Calendar.MONTH),
+                calendar.get(java.util.Calendar.DAY_OF_MONTH)
+            ).apply {
+                // só permite escolher datas futuras
+                datePicker.minDate = System.currentTimeMillis() + 86400000L
+            }.show()
         }
 
         saveNoteBtn!!.setOnClickListener(View.OnClickListener { v: View? -> saveNote() })
@@ -109,6 +144,10 @@ class NoteDetailsActivity : AppCompatActivity() {
         note.setTitle(noteTitle)
         note.setContent(noteContent)
         note.setTimestamp(now())
+        // se o utilizador escolheu uma data de bloqueio guardamo-la na nota como Timestamp
+        selectedUnlockDate?.let {
+            note.setUnlockDate(com.google.firebase.Timestamp(it))
+        }
 
         saveNoteToFirebase(note)
     }

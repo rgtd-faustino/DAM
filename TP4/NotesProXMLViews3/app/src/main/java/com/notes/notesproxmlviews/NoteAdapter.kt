@@ -30,16 +30,39 @@ class NoteAdapter(options: FirestoreRecyclerOptions<Note>, val context: Context)
             holder.imageThumbnail.visibility = android.view.View.GONE
         }
 
-        holder.itemView.setOnClickListener {
-            val intent = Intent(context, NoteDetailsActivity::class.java)
-            intent.putExtra("title", note.title)
-            intent.putExtra("content", note.content)
-            val docId = snapshots.getSnapshot(position).id
-            intent.putExtra("docId", docId)
-            // passamos o URL da imagem para que a NoteDetailsActivity consiga carregar
-            // a imagem que já estava guardada no firebase storage quando abrimos a nota para editar
-            intent.putExtra("imageUrl", note.imageUrl)
-            context.startActivity(intent)
+        // verificamos se a nota está bloqueada comparando a data de desbloqueio com o momento atual
+        val isLocked = note.unlockDate != null && note.unlockDate.toDate().after(java.util.Date())
+
+        if (isLocked) {
+            // nota bloqueada: mostramos o cadeado e desativamos o clique
+            holder.lockTextView.visibility = View.VISIBLE
+            holder.lockTextView.text = "Abre em ${Utility.timestampToString(note.unlockDate)}"
+            holder.titleTextView.alpha = 0.4f
+            holder.contentTextView.visibility = View.GONE
+            holder.imageThumbnail.alpha = 0.4f
+            holder.timestampTextView.alpha = 0.4f
+            holder.itemView.setOnClickListener {
+                Utility.showToast(context, "Esta nota abre em ${Utility.timestampToString(note.unlockDate)}")
+            }
+        } else {
+            // nota normal ou já desbloqueada: comportamento normal
+            holder.lockTextView.visibility = View.GONE
+            holder.titleTextView.alpha = 1f
+            holder.contentTextView.visibility = View.VISIBLE
+            holder.contentTextView.alpha = 1f
+            holder.imageThumbnail.alpha = 1f
+            holder.timestampTextView.alpha = 1f
+            holder.itemView.setOnClickListener {
+                val intent = Intent(context, NoteDetailsActivity::class.java)
+                intent.putExtra("title", note.title)
+                intent.putExtra("content", note.content)
+                val docId = snapshots.getSnapshot(position).id
+                intent.putExtra("docId", docId)
+                intent.putExtra("imageUrl", note.imageUrl)
+                // passamos a data de desbloqueio como Long para a NoteDetailsActivity poder mostrá-la
+                note.unlockDate?.let { intent.putExtra("unlockDate", it.seconds) }
+                context.startActivity(intent)
+            }
         }
     }
 
@@ -55,5 +78,6 @@ class NoteAdapter(options: FirestoreRecyclerOptions<Note>, val context: Context)
         val timestampTextView: TextView = itemView.findViewById(R.id.note_timestamp_text_view)
         // referência à imageview do thumbnail que adicionámos ao layout do item da lista
         val imageThumbnail: android.widget.ImageView = itemView.findViewById(R.id.note_image_thumbnail)
+        val lockTextView: TextView = itemView.findViewById(R.id.note_lock_text_view)
     }
 }

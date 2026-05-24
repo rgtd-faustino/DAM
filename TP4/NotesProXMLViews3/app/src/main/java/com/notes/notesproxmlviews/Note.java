@@ -46,5 +46,16 @@ public class Note {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    // data a partir da qual a nota fica acessível, null significa que não está bloqueada
+    Timestamp unlockDate;
+
+    public Timestamp getUnlockDate() {
+        return unlockDate;
+    }
+
+    public void setUnlockDate(Timestamp unlockDate) {
+        this.unlockDate = unlockDate;
+    }
 }
 
