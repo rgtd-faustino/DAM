@@ -3,7 +3,7 @@
 **Course:** Desenvolvimento de Aplicações Móveis (DAM)  
 **Student:** A51394 Rafael Faustino  
 **Date:** 24/05/2026  
-**Repository URL:** https://github.com/rgtd-faustino/DAM_TP4_Firebase
+**Repository URL:** [DAM_TP4_NotesProXMLViews3](https://github.com/rgtd-faustino/DAM/edit/main/TP4/NotesProXMLViews3)
 
 ---
 
