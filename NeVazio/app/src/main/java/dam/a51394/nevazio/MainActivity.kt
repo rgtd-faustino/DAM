@@ -14,7 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.KoinAndroidContext
+import org.koin.androidx.compose.koinViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -35,34 +36,51 @@ import dam.a51394.nevazio.ui.shopping.ShoppingListScreen
 import dam.a51394.nevazio.ui.shopping.ShoppingViewModel
 import dam.a51394.nevazio.ui.theme.NeVazioTheme
 import dam.a51394.nevazio.ui.theme.SuccessGreen
+import dam.a51394.nevazio.ui.scan.ScanScreen
+import dam.a51394.nevazio.ui.profile.ProfileScreen
+import dam.a51394.nevazio.ui.profile.ProfileViewModel
 
-// ── Routes ──────────────────────────────────────────────────────────────────
-object Routes {
-    const val LOGIN = "login"
-    const val REGISTER = "register"
-    const val HOME = "home"
-    const val RECIPES = "recipes"
-    const val RECIPE_DETAIL = "recipe_detail/{recipeId}"
-    const val SHOPPING = "shopping"
+import kotlinx.serialization.Serializable
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.toRoute
 
-    fun recipeDetail(recipeId: String) = "recipe_detail/$recipeId"
-}
+// ── Type-Safe Routes ────────────────────────────────────────────────────────
+@Serializable
+object LoginRoute
+
+@Serializable
+object RegisterRoute
+
+@Serializable
+object HomeRoute
+
+@Serializable
+object RecipesRoute
+
+@Serializable
+data class RecipeDetailRoute(val recipeId: String)
+
+@Serializable
+object ShoppingRoute
+
+@Serializable
+object ScanRoute
+
+@Serializable
+object ProfileRoute
 
 // ── Bottom nav items ─────────────────────────────────────────────────────────
 data class BottomNavItem(
-    val route: String,
+    val route: Any,
     val label: String,
     val icon: ImageVector
 )
 
 val bottomNavItems = listOf(
-    BottomNavItem(Routes.HOME, "Frigorífico", Icons.Default.Home),
-    BottomNavItem(Routes.RECIPES, "Receitas", Icons.Default.MenuBook),
-    BottomNavItem(Routes.SHOPPING, "Compras", Icons.Default.ShoppingCart),
+    BottomNavItem(HomeRoute, "Inventário", Icons.Default.Home),
+    BottomNavItem(RecipesRoute, "Receitas", Icons.Default.MenuBook),
+    BottomNavItem(ShoppingRoute, "Compras", Icons.Default.ShoppingCart),
 )
-
-// ── Routes that show the bottom bar ─────────────────────────────────────────
-val bottomBarRoutes = setOf(Routes.HOME, Routes.RECIPES, Routes.SHOPPING)
 
 // ── Activity ─────────────────────────────────────────────────────────────────
 class MainActivity : ComponentActivity() {
@@ -71,7 +89,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NeVazioTheme {
-                NeVazioApp()
+                // KoinAndroidContext associa o contexto Koin à árvore de Compose.
+                // Sem este wrapper, cada koinViewModel() emite um aviso [Warning] por não
+                // encontrar um contexto Compose explícito, mesmo que o Koin global esteja ativo.
+                KoinAndroidContext {
+                    NeVazioApp()
+                }
             }
         }
     }
@@ -82,8 +105,14 @@ class MainActivity : ComponentActivity() {
 fun NeVazioApp() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-    val showBottomBar = currentRoute in bottomBarRoutes
+    val currentDestination = navBackStackEntry?.destination
+
+    val showBottomBar = currentDestination?.let { dest ->
+        dest.hasRoute<HomeRoute>() || dest.hasRoute<RecipesRoute>() || dest.hasRoute<ShoppingRoute>()
+    } ?: false
+
+    val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
+    val startDest: Any = if (auth.currentUser != null) HomeRoute else LoginRoute
 
     Scaffold(
         bottomBar = {
@@ -92,9 +121,16 @@ fun NeVazioApp() {
                     containerColor = MaterialTheme.colorScheme.surface,
                     tonalElevation = androidx.compose.ui.unit.Dp(4f)
                 ) {
-                    val currentDestination = navBackStackEntry?.destination
                     bottomNavItems.forEach { item ->
-                        val selected = currentDestination?.hierarchy?.any { it.route == item.route } == true
+                        val selected = currentDestination?.hierarchy?.any { 
+                            when (item.route) {
+                                is HomeRoute -> it.hasRoute<HomeRoute>()
+                                is RecipesRoute -> it.hasRoute<RecipesRoute>()
+                                is ShoppingRoute -> it.hasRoute<ShoppingRoute>()
+                                else -> false
+                            }
+                        } == true
+                        
                         NavigationBarItem(
                             selected = selected,
                             onClick = {
@@ -121,63 +157,103 @@ fun NeVazioApp() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Routes.LOGIN,
+            startDestination = startDest,
             modifier = Modifier.padding(innerPadding)
         ) {
             // ── Auth ──────────────────────────────────────────────────────
-            composable(Routes.LOGIN) {
-                val vm: LoginViewModel = viewModel()
+            composable<LoginRoute> {
+                val vm: LoginViewModel = koinViewModel()
                 LoginScreen(
                     viewModel = vm,
-                    onNavigateToRegister = { navController.navigate(Routes.REGISTER) },
+                    onNavigateToRegister = { navController.navigate(RegisterRoute) },
                     onLoginSuccess = {
-                        navController.navigate(Routes.HOME) {
-                            popUpTo(Routes.LOGIN) { inclusive = true }
+                        navController.navigate(HomeRoute) {
+                            popUpTo<LoginRoute> { inclusive = true }
                         }
                     }
                 )
             }
-            composable(Routes.REGISTER) {
-                val vm: RegisterViewModel = viewModel()
+            composable<RegisterRoute> {
+                val vm: RegisterViewModel = koinViewModel()
                 RegisterScreen(
                     viewModel = vm,
                     onNavigateToLogin = { navController.popBackStack() },
                     onRegisterSuccess = {
-                        navController.navigate(Routes.HOME) {
-                            popUpTo(Routes.LOGIN) { inclusive = true }
+                        navController.navigate(HomeRoute) {
+                            popUpTo<LoginRoute> { inclusive = true }
                         }
                     }
                 )
             }
 
             // ── Main tabs ─────────────────────────────────────────────────
-            composable(Routes.HOME) {
-                val vm: HomeViewModel = viewModel()
+            composable<HomeRoute> { backStackEntry ->
+                val vm: HomeViewModel = koinViewModel()
+                val detectedItem = backStackEntry.savedStateHandle.get<String>("detected_item")
+                if (detectedItem != null) {
+                    backStackEntry.savedStateHandle.remove<String>("detected_item")
+                    vm.showAddSheet(detectedItem)
+                }
+
                 HomeScreen(
                     viewModel = vm,
-                    onNavigateToScan = { /* TODO: scan */ }
+                    onNavigateToScan = { navController.navigate(ScanRoute) },
+                    onNavigateToProfile = { navController.navigate(ProfileRoute) }
                 )
             }
-            composable(Routes.RECIPES) {
-                val vm: RecipesViewModel = viewModel()
-                RecipesScreen(
-                    viewModel = vm,
-                    onNavigateToRecipeDetail = { recipeId ->
-                        navController.navigate(Routes.recipeDetail(recipeId))
+            composable<ScanRoute> {
+                ScanScreen(
+                    onNavigateBack = { detectedItem -> 
+                        if (detectedItem != null) {
+                            navController.previousBackStackEntry?.savedStateHandle?.set("detected_item", detectedItem)
+                        }
+                        navController.popBackStack() 
                     }
                 )
             }
-            composable(Routes.SHOPPING) {
-                val vm: ShoppingViewModel = viewModel()
+            composable<RecipesRoute> {
+                val vm: RecipesViewModel = koinViewModel()
+                RecipesScreen(
+                    viewModel = vm,
+                    onNavigateToRecipeDetail = { recipeId ->
+                        navController.navigate(RecipeDetailRoute(recipeId))
+                    }
+                )
+            }
+            composable<ShoppingRoute> {
+                val vm: ShoppingViewModel = koinViewModel()
                 ShoppingListScreen(viewModel = vm)
             }
 
             // ── Recipe detail ─────────────────────────────────────────────
-            composable(Routes.RECIPE_DETAIL) {
-                val vm: RecipeViewModel = viewModel()
+            composable<RecipeDetailRoute> { backStackEntry ->
+                val routeInfo = backStackEntry.toRoute<RecipeDetailRoute>()
+                val vm: RecipeViewModel = koinViewModel { org.koin.core.parameter.parametersOf(routeInfo.recipeId) }
                 RecipeDetailScreen(
                     viewModel = vm,
                     onNavigateBack = { navController.popBackStack() }
+                )
+            }
+            
+            // ── Profile ───────────────────────────────────────────────────
+            composable<ProfileRoute> {
+                val vm: ProfileViewModel = koinViewModel()
+                ProfileScreen(
+                    viewModel = vm,
+                    onNavigateBack = { navController.popBackStack() },
+                    onLogoutSuccess = {
+                        navController.navigate(LoginRoute) {
+                            popUpTo<HomeRoute> { inclusive = true }
+                        }
+                    },
+                    // Quando o familyCode muda, todos os ViewModels já instanciados (Home, Shopping)
+                    // têm o fridge ID antigo em memória. O reset completo da navegação garante que
+                    // são recriados via Koin com o ID correto na próxima composição.
+                    onFamilyChanged = {
+                        navController.navigate(HomeRoute) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
                 )
             }
         }

@@ -11,12 +11,12 @@ enum class ExpiryStatus {
 }
 
 data class Ingredient(
-    val id: String,
-    val name: String,
-    val quantity: String,
-    val expiryDate: Date?,
-    val location: StorageLocation,
-    val iconName: String, // e.g. "egg", "water_drop", "eco"
-    val status: ExpiryStatus,
-    val expiryLabel: String = "" // e.g. "12 Mai", "Hoje!", "2 dias"
+    var id: String = "",
+    var name: String = "",
+    var quantity: String = "",
+    var expiryDate: Date? = null,
+    var location: StorageLocation = StorageLocation.FRIDGE,
+    var iconName: String = "", // e.g. "egg", "water_drop", "eco"
+    var status: ExpiryStatus = ExpiryStatus.FRESH,
+    var expiryLabel: String = "" // e.g. "12 Mai", "Hoje!", "2 dias"
 )

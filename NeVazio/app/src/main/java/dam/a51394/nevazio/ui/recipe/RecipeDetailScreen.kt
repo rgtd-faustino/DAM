@@ -10,8 +10,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.tooling.preview.Preview
+import dam.a51394.nevazio.ui.theme.NeVazioTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,13 +25,18 @@ import dam.a51394.nevazio.data.model.ExpiryStatus
 import dam.a51394.nevazio.data.model.Ingredient
 import dam.a51394.nevazio.ui.theme.SuccessGreen
 import dam.a51394.nevazio.ui.theme.DarkGreen
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
 
 @Composable
 fun RecipeDetailScreen(
     viewModel: RecipeViewModel,
     onNavigateBack: () -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -43,14 +50,23 @@ fun RecipeDetailScreen(
                         .fillMaxWidth()
                         .height(280.dp)
                 ) {
-                    // Image placeholder
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color(0xFFFFF8E1)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("🍳", fontSize = 80.sp)
+                    if (uiState.imageUrl.isNotEmpty()) {
+                        AsyncImage(
+                            model = uiState.imageUrl,
+                            contentDescription = uiState.title,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        // Image placeholder
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color(0xFFFFF8E1)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("🍳", fontSize = 80.sp)
+                        }
                     }
 
                     // Back button overlay
@@ -195,7 +211,9 @@ fun RecipeDetailScreen(
             shadowElevation = 12.dp
         ) {
             Button(
-                onClick = {},
+                onClick = {
+                    Toast.makeText(context, "Bom apetite! Segue os passos acima.", Toast.LENGTH_SHORT).show()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -248,22 +266,29 @@ fun RecipeIngredientItem(ingredient: Ingredient, isAvailable: Boolean) {
                     "cheese" -> "🧀"
                     "water_drop" -> "💧"
                     "eco" -> "🥦"
+                    "restaurant" -> "🥩"
+                    "food" -> "🥘"
                     else -> "🥗"
                 }
                 Text(emoji, fontSize = 18.sp)
             }
-            Text(
-                ingredient.name,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                ingredient.quantity,
-                style = MaterialTheme.typography.labelMedium,
-                color = if (isAvailable) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
-                fontWeight = FontWeight.Medium
-            )
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    ingredient.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    ingredient.quantity,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (isAvailable) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Medium
+                )
+            }
             Spacer(Modifier.width(4.dp))
             Icon(
                 imageVector = if (isAvailable) Icons.Default.CheckCircle else Icons.Default.Cancel,
@@ -315,6 +340,18 @@ fun RecipeStepItem(number: Int, text: String, isLast: Boolean) {
                 .padding(top = 8.dp, bottom = 24.dp)
                 .weight(1f),
             lineHeight = 24.sp
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RecipeStepItemPreview() {
+    NeVazioTheme {
+        RecipeStepItem(
+            number = 1,
+            text = "Parta os ovos para uma tigela e bata ligeiramente com um garfo até misturar as gemas com as claras.",
+            isLast = false
         )
     }
 }

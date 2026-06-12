@@ -8,9 +8,12 @@ data class HomeUiState(
     val ingredients: List<Ingredient> = emptyList(),
     val filteredIngredients: List<Ingredient> = emptyList(),
     val searchQuery: String = "",
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val errorMessage: String? = null,
     val selectedTab: Int = 0, // 0: Frigorífico, 1: Despensa, 2: Scan
     val showAddSheet: Boolean = false,
-    val expiryWarning: String? = null
+    val expiryWarning: String? = null,
+    val editingIngredient: Ingredient? = null,
+    val initialAddName: String = "",
+    val ingredientToDelete: Ingredient? = null
 )

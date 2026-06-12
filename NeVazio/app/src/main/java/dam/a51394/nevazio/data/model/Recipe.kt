@@ -7,7 +7,8 @@ data class Recipe(
     val difficulty: String,
     val tags: List<String>,
     val matchPercentage: Int,
-    val missingIngredients: Int
+    val missingIngredients: Int,
+    val imageUrl: String = ""
 )
 
 data class RecipeStep(

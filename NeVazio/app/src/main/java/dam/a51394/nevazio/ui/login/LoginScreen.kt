@@ -14,7 +14,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +40,11 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onLoginSuccess: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    // A utilização de collectAsStateWithLifecycle() permite a interrupção da escuta do Flow 
+    // quando a aplicação transita para segundo plano ou o ecrã é desligado.
+    // Este comportamento é particularmente relevante num ecrã de Login para evitar a 
+    // existência de processos fantasma a consumir tráfego de rede.
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier
@@ -140,7 +144,7 @@ fun LoginScreen(
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.SemiBold
                         )
-                        TextButton(onClick = {}) {
+                        TextButton(onClick = viewModel::onResetPassword) {
                             Text(
                                 "Esqueceste a password?",
                                 color = SuccessGreen,
@@ -184,10 +188,21 @@ fun LoginScreen(
                             style = MaterialTheme.typography.labelMedium
                         )
                     }
+                    if (uiState.message != null) {
+                        Text(
+                            text = uiState.message!!,
+                            color = SuccessGreen,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
 
                     Spacer(Modifier.height(8.dp))
 
-                    // Login button
+                    // A desativação do botão (enabled = !uiState.isLoading) durante o processamento
+                    // previne o envio de pedidos simultâneos ou redundantes para a Firebase Auth.
+                    // Este bloqueio mitiga o risco de bloqueio temporário de IP imposto pela Google
+                    // derivado de excesso de tráfego provocado por cliques sucessivos.
                     Button(
                         onClick = { viewModel.onLogin(onLoginSuccess) },
                         modifier = Modifier
@@ -216,10 +231,10 @@ fun LoginScreen(
 
                     Spacer(Modifier.height(8.dp))
 
-                    // Register link
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
+                    // Register link (Proper clickable text button)
+                    TextButton(
+                        onClick = onNavigateToRegister,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
                             buildAnnotatedString {
@@ -229,18 +244,8 @@ fun LoginScreen(
                                 }
                             },
                             style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    // Invisible button overlay for "Criar conta"
-                    TextButton(
-                        onClick = onNavigateToRegister,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            "Criar conta",
-                            color = SuccessGreen,
-                            fontWeight = FontWeight.Bold
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
