@@ -17,7 +17,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +42,7 @@ fun RegisterScreen(
     onNavigateToLogin: () -> Unit,
     onRegisterSuccess: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Box(
         modifier = Modifier
@@ -231,47 +231,31 @@ fun RegisterScreen(
                         .fillMaxWidth()
                         .height(56.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = SuccessGreen),
-                    shape = RoundedCornerShape(28.dp)
+                    shape = RoundedCornerShape(28.dp),
+                    enabled = !uiState.isLoading
                 ) {
-                    Text(
-                        "CRIAR CONTA",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                    if (uiState.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            "CRIAR CONTA",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
                 }
 
-                // Divider "ou"
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                // Login link (Proper clickable text button)
+                TextButton(
+                    onClick = onNavigateToLogin,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Divider(modifier = Modifier.weight(1f))
-                    Text("  ou  ", color = MaterialTheme.colorScheme.outline, style = MaterialTheme.typography.bodyMedium)
-                    Divider(modifier = Modifier.weight(1f))
-                }
-
-                // Google button
-                OutlinedButton(
-                    onClick = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    border = ButtonDefaults.outlinedButtonBorder
-                ) {
-                    Text("G  ", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color(0xFF4285F4))
-                    Text(
-                        "Continuar com Google",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                // Login link
-                TextButton(onClick = onNavigateToLogin) {
                     Text(
                         buildAnnotatedString {
                             append("Já tens conta? ")
@@ -279,7 +263,9 @@ fun RegisterScreen(
                                 append("Entrar")
                             }
                         },
-                        style = MaterialTheme.typography.bodyMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

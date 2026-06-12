@@ -5,5 +5,7 @@ import dam.a51394.nevazio.data.model.ShoppingItem
 data class ShoppingUiState(
     val itemsToBuy: List<ShoppingItem> = emptyList(),
     val itemsBought: List<ShoppingItem> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val showAddDialog: Boolean = false,
+    val editingItem: ShoppingItem? = null
 )
