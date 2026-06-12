@@ -23,6 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dam.a51394.nevazio.data.model.Recipe
 import dam.a51394.nevazio.ui.theme.SuccessGreen
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.tooling.preview.Preview
+import dam.a51394.nevazio.ui.theme.NeVazioTheme
+import dam.a51394.nevazio.ui.recipes.RecipesUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +36,7 @@ fun RecipesScreen(
     viewModel: RecipesViewModel,
     onNavigateToRecipeDetail: (String) -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -49,11 +55,6 @@ fun RecipesScreen(
                         )
                     }
                 },
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar")
-                    }
-                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background
                 )
@@ -61,18 +62,61 @@ fun RecipesScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item { Spacer(Modifier.height(4.dp)) }
-            items(uiState.recipes) { recipe ->
-                RecipeCard(recipe = recipe, onClick = { onNavigateToRecipeDetail(recipe.id) })
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(color = SuccessGreen)
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        "A procurar receitas...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
-            item { Spacer(Modifier.height(16.dp)) }
+        } else if (uiState.recipes.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(16.dp)) {
+                    Text(if (uiState.errorMessage != null) "⚠️" else "🍽️", fontSize = 64.sp)
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        if (uiState.errorMessage != null) "Erro ou limite da API" else "Nenhuma receita sugerida",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        uiState.errorMessage ?: "Adiciona mais ingredientes ao teu frigorífico\npara obteres recomendações.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item { Spacer(Modifier.height(4.dp)) }
+                items(uiState.recipes) { recipe ->
+                    RecipeCard(recipe = recipe, onClick = { onNavigateToRecipeDetail(recipe.id) })
+                }
+                item { Spacer(Modifier.height(16.dp)) }
+            }
         }
     }
 }
@@ -101,27 +145,12 @@ fun RecipeCard(recipe: Recipe, onClick: () -> Unit) {
                     .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
             ) {
-                // Food emoji placeholder
-                val emoji = when (recipe.id) {
-                    "1" -> "🍳"
-                    "2" -> "🥣"
-                    "3" -> "🍳"
-                    else -> "🍽️"
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            when (recipe.id) {
-                                "1" -> Color(0xFFFFF8E1)
-                                "2" -> Color(0xFFE8F5E9)
-                                else -> Color(0xFFFFF8E1)
-                            }
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(emoji, fontSize = 64.sp)
-                }
+                AsyncImage(
+                    model = recipe.imageUrl,
+                    contentDescription = recipe.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
 
                 // Match badge
                 Surface(
@@ -138,7 +167,7 @@ fun RecipeCard(recipe: Recipe, onClick: () -> Unit) {
                     ) {
                         Icon(Icons.Default.Bolt, null, tint = Color.White, modifier = Modifier.size(14.dp))
                         Text(
-                            "${recipe.matchPercentage}% Match",
+                            "${recipe.matchPercentage}% Compatível",
                             color = Color.White,
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold
@@ -234,5 +263,25 @@ fun RecipeCard(recipe: Recipe, onClick: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RecipeCardPreview() {
+    NeVazioTheme {
+        RecipeCard(
+            recipe = Recipe(
+                id = "1",
+                name = "Sopa de Legumes",
+                timeMinutes = 30,
+                difficulty = "Fácil",
+                tags = listOf("Fácil", "Saudável"),
+                matchPercentage = 80,
+                missingIngredients = 2,
+                imageUrl = ""
+            ),
+            onClick = {}
+        )
     }
 }

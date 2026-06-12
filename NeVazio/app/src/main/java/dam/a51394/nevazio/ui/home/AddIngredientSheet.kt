@@ -26,16 +26,48 @@ import dam.a51394.nevazio.ui.theme.SuccessGreen
 @Composable
 fun AddIngredientSheet(
     onDismiss: () -> Unit,
-    onAdd: (name: String, quantity: String, unit: String, location: StorageLocation) -> Unit
+    initialName: String = "",
+    initialQuantity: String = "0",
+    initialUnit: String = "un",
+    initialLocation: StorageLocation = StorageLocation.FRIDGE,
+    initialExpiryMillis: Long? = null,
+    title: String = "Adicionar Ingrediente",
+    buttonText: String = "ADICIONAR",
+    onAdd: (name: String, quantity: String, unit: String, location: StorageLocation, expiryMillis: Long?) -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
-    var quantity by remember { mutableStateOf("0") }
-    var selectedUnit by remember { mutableStateOf("un") }
-    var expiryDate by remember { mutableStateOf("") }
-    var selectedLocation by remember { mutableStateOf(StorageLocation.FRIDGE) }
+    var name by remember { mutableStateOf(initialName) }
+    var quantity by remember { mutableStateOf(initialQuantity.ifBlank { "0" }) }
+    var selectedUnit by remember { mutableStateOf(initialUnit) }
+    var selectedDateMillis by remember { mutableStateOf(initialExpiryMillis) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var selectedLocation by remember { mutableStateOf(initialLocation) }
     var unitExpanded by remember { mutableStateOf(false) }
 
     val units = listOf("un", "kg", "g", "L", "ml", "dz")
+
+    val formattedDate = remember(selectedDateMillis) {
+        selectedDateMillis?.let {
+            java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault()).format(java.util.Date(it))
+        } ?: ""
+    }
+
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDateMillis)
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    selectedDateMillis = datePickerState.selectedDateMillis
+                    showDatePicker = false
+                }) { Text("OK", color = SuccessGreen) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) { Text("Cancelar") }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -59,7 +91,7 @@ fun AddIngredientSheet(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                "Adicionar Ingrediente",
+                title,
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.ExtraBold
             )
@@ -145,81 +177,89 @@ fun AddIngredientSheet(
             }
 
             // Data de validade
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("Data de validade", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
-                OutlinedTextField(
-                    value = expiryDate,
-                    onValueChange = { expiryDate = it },
-                    placeholder = { Text("mm/dd/yyyy", color = MaterialTheme.colorScheme.outline) },
-                    leadingIcon = { Icon(Icons.Default.CalendarMonth, null, tint = MaterialTheme.colorScheme.outline) },
-                    trailingIcon = { Icon(Icons.Default.CalendarMonth, null, tint = MaterialTheme.colorScheme.outline) },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(14.dp),
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
-                        focusedBorderColor = SuccessGreen,
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White
-                    )
-                )
-            }
-
-            // Localização
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text("Localização", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(14.dp))
-                        .border(1.dp, MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(14.dp))
-                        .padding(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    // Frigorífico tab
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("Data de validade", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                     Surface(
-                        modifier = Modifier.weight(1f),
-                        color = if (selectedLocation == StorageLocation.FRIDGE) Color.White else Color.Transparent,
-                        shape = RoundedCornerShape(10.dp),
-                        shadowElevation = if (selectedLocation == StorageLocation.FRIDGE) 2.dp else 0.dp,
-                        onClick = { selectedLocation = StorageLocation.FRIDGE }
+                        onClick = { showDatePicker = true },
+                        shape = RoundedCornerShape(14.dp),
+                        color = Color.Transparent
                     ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(Icons.Default.Kitchen, null, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.width(6.dp))
-                            Text("Frigorífico", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                        }
+                        OutlinedTextField(
+                            value = formattedDate,
+                            onValueChange = { },
+                            readOnly = true,
+                            enabled = false,
+                            placeholder = { Text("dd/mm/yyyy", color = MaterialTheme.colorScheme.outline) },
+                            leadingIcon = { Icon(Icons.Default.CalendarMonth, null, tint = MaterialTheme.colorScheme.outline) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(14.dp),
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                disabledBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+                                disabledContainerColor = Color.White,
+                                disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                                disabledLeadingIconColor = MaterialTheme.colorScheme.outline,
+                                disabledPlaceholderColor = MaterialTheme.colorScheme.outline
+                            )
+                        )
                     }
-                    // Despensa tab
-                    Surface(
-                        modifier = Modifier.weight(1f),
-                        color = if (selectedLocation == StorageLocation.PANTRY) Color.White else Color.Transparent,
-                        shape = RoundedCornerShape(10.dp),
-                        shadowElevation = if (selectedLocation == StorageLocation.PANTRY) 2.dp else 0.dp,
-                        onClick = { selectedLocation = StorageLocation.PANTRY }
+                }
+
+                // Localização
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("Localização", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f), RoundedCornerShape(14.dp))
+                            .border(1.dp, MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(14.dp))
+                            .padding(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
-                        Row(
-                            modifier = Modifier.padding(12.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
+                        // Frigorífico tab
+                        Surface(
+                            modifier = Modifier.weight(1f),
+                            color = if (selectedLocation == StorageLocation.FRIDGE) Color.White else Color.Transparent,
+                            shape = RoundedCornerShape(10.dp),
+                            shadowElevation = if (selectedLocation == StorageLocation.FRIDGE) 2.dp else 0.dp,
+                            onClick = { selectedLocation = StorageLocation.FRIDGE }
                         ) {
-                            Icon(Icons.Default.Storage, null, modifier = Modifier.size(18.dp))
-                            Spacer(Modifier.width(6.dp))
-                            Text("Despensa", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(Icons.Default.Kitchen, null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text("Frigorífico", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                            }
+                        }
+                        // Despensa tab
+                        Surface(
+                            modifier = Modifier.weight(1f),
+                            color = if (selectedLocation == StorageLocation.PANTRY) Color.White else Color.Transparent,
+                            shape = RoundedCornerShape(10.dp),
+                            shadowElevation = if (selectedLocation == StorageLocation.PANTRY) 2.dp else 0.dp,
+                            onClick = { selectedLocation = StorageLocation.PANTRY }
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(Icons.Default.Storage, null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(6.dp))
+                                Text("Despensa", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                            }
                         }
                     }
                 }
-            }
 
             Spacer(Modifier.height(8.dp))
 
             // ADICIONAR button
             Button(
-                onClick = { onAdd(name, quantity, selectedUnit, selectedLocation) },
+                onClick = { onAdd(name, quantity, selectedUnit, selectedLocation, selectedDateMillis) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -227,7 +267,7 @@ fun AddIngredientSheet(
                 shape = RoundedCornerShape(28.dp)
             ) {
                 Text(
-                    "ADICIONAR",
+                    buttonText,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     color = Color.White

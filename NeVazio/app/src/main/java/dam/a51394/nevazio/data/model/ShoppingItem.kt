@@ -1,9 +1,13 @@
 package dam.a51394.nevazio.data.model
 
 data class ShoppingItem(
-    val id: String,
-    val name: String,
-    val quantity: String,
-    val addedBy: String,
-    val isBought: Boolean = false
+    var id: String = "",
+    var name: String = "",
+    var quantity: String = "",
+    var unit: String = "un",
+    var location: StorageLocation = StorageLocation.FRIDGE,
+    var expiryDate: java.util.Date? = null,
+    var addedBy: String = "",
+    var bought: Boolean = false,
+    var linkedIngredientId: String = ""
 )
