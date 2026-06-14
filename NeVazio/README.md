@@ -93,6 +93,8 @@ Foram feitas múltiplas rondas de validação manuais intensas na aplicação:
    `SPOONACULAR_API_KEY=inserir_a_chave_aqui`
 4. Sincronizar o Gradle e correr na build `Debug` no dispositivo.
 
+O APK de debug compilado encontra-se também na raiz da pasta `NeVazio/` para instalação direta.
+
 ## 7. Prompting Strategy
 
 Desta vez, a colaboração com o Google Antigravity e o Claude foi contínua e muito natural. O objetivo era montar um ecossistema complexo mas estável. Usei prompts diretivos mas construtivos.
