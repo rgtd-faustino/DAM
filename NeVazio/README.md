@@ -1,23 +1,23 @@
-# Assignment Final - MIP: NéVazio
+# Projeto Final - NéVazio
 
-**Course:** Desenvolvimento de Aplicações Móveis (DAM)
-**Student:** A51394 Rafael Faustino
-**Date:** 12/06/2026
+**Course:** Desenvolvimento de Aplicações Móveis (DAM)  
+**Student:** A51394 Rafael Faustino  
+**Date:** 14/06/2026  
 **Repository URL:** https://github.com/rgtd-faustino/DAM/tree/main/Nevazio
 
 ## 1. Introdução
 
 A aplicação **NéVazio** é o projeto final da unidade curricular de Desenvolvimento de Aplicações Móveis (DAM). Surgindo da necessidade real de reduzir o desperdício alimentar e organizar melhor o que temos em casa, a app propõe-se a ser o gestor inteligente do nosso frigorífico e despensa. A integração de contas familiares partilhadas, reconhecimento por imagem de alimentos e sugestões de receitas formam o núcleo desta solução.
 
-Este projeto representa o culminar de todas as matérias lecionadas ao longo do semestre, exigindo a integração coordenada de bases de dados na cloud, autenticação de utilizadores, consumo de APIs externas (Retrofit), Machine Learning no dispositivo (ML Kit) e a construção de interfaces reativas e modernas com Jetpack Compose. O desafio aqui foi não só criar as funcionalidades exigidas no documento objetivo da app (o PDF do projeto), mas também fazê-lo respeitando a arquitetura escalável e as melhores práticas que nos foram ensinadas.
+Este projeto representa o culminar de todas as matérias lecionadas ao longo do semestre, exigindo a integração coordenada de bases de dados na cloud, autenticação de utilizadores, consumo de APIs externas (Retrofit), Machine Learning no dispositivo (ML Kit) e a construção de interfaces reativas e modernas com Jetpack Compose. O desafio aqui foi não só criar as funcionalidades exigidas no documento com a proposta da app (o PDF da ideia de projeto), mas também fazê-lo respeitando a arquitetura escalável e as melhores práticas que nos foram ensinadas.
 
 ## 2. Visão Geral do Sistema
 
-O NéVazio é um ecossistema completo de gestão alimentar, suportado pelo Firebase para sincronização em tempo real. Uma funcionalidade central é o suporte a agregados familiares: vários utilizadores podem partilhar o mesmo "frigorífico virtual", vendo atualizações feitas por outros membros instantaneamente.
+O NéVazio é um ecossistema completo de gestão alimentar, suportado pelo Firebase para sincronização em tempo real. Uma funcionalidade central é o suporte a agregados familiares: vários utilizadores podem partilhar o mesmo "frigorífico virtual", bem como a lista de compras e as mesmas receitas, vendo atualizações feitas por outros membros instantaneamente.
 
 ### Funcionalidades Principais Implementadas
 
-Em conformidade absoluta com o plano de objetivos estabelecido (`NevazioFinalFormObjective.pdf`), a aplicação garante a entrega de 100% das funcionalidades propostas:
+Em conformidade absoluta com o plano de objetivos estabelecido (`ProjectProposal-A51394.pdf`), a aplicação garante a entrega de 100% das funcionalidades propostas:
 
 * **Conta partilhada por família:** Autenticação via Firebase Auth e associação a um código familiar (criado ou partilhado) que permite ler e escrever no mesmo documento de frigorífico no Firestore.
 * **Adicionar ingredientes manualmente:** Formulários claros para inserção de nome, quantidade, localização (frigorífico/despensa) e data de validade.
@@ -26,6 +26,16 @@ Em conformidade absoluta com o plano de objetivos estabelecido (`NevazioFinalFor
 * **Alerta de validade:** Acompanhamento visual da frescura dos ingredientes e notificações de aproximação do limite de consumo.
 * **Lista de restock partilhada (Shopping List):** Um menu dedicado sincronizado na cloud para gerir as compras da família, com caixas de seleção que atualizam o estado de "comprado" em tempo real para todos.
 * **Sugestão de receitas:** Ligação à API do Spoonacular via Retrofit para descobrir o que cozinhar com o que temos atualmente na despensa.
+
+### Ecrãs da Aplicação
+
+| Inventário | Receitas Sugeridas | Lista de Compras |
+|:---:|:---:|:---:|
+| <img src="screenshots/homepage.jpg" width="180"/> | <img src="screenshots/exemplosReceitas.jpg" width="180"/> | <img src="screenshots/listaCompras.jpg" width="180"/> |
+
+O ecrã de detalhe de receita cruza os ingredientes da API com o inventário atual, marcando a verde o que já existe em casa e a vermelho o que falta.
+
+<img src="screenshots/receita.jpg" width="180"/>
 
 ## 3. Arquitetura e Design
 
@@ -39,7 +49,7 @@ Seguimos à risca o padrão MVVM (Model-View-ViewModel) e a arquitetura recomend
 
 ### Aplicação dos Ensinamentos (Slides)
 
-* **Jetpack Compose (Set 1 e 2):** Toda a UI foi feita de forma declarativa. O uso de `Modifier`, `LazyColumn` para as listas (no frigorífico e receitas) e o sistema de `Scaffold` com `BottomNavigationBar` reflete os princípios dos slides "JPC 2 - Core Composables" e "JPC 6 - Navigation".
+* **Jetpack Compose (Set 1 e 2):** Toda a UI foi feita de forma declarativa. O uso de `Modifier`, `LazyColumn` para as listas (no frigorífico e receitas) e o sistema de `Scaffold` reflete os princípios dos slides "JPC 2 - Core Composables" e "JPC 6 - Navigation".
 * **State Management (JPC 4 - State and Recomposition):** Todos os ViewModels expõem o estado através de um `StateFlow` único (ex: `HomeUiState`), consumido na UI com `collectAsStateWithLifecycle()` para garantir que só se reage a mudanças quando a app está visível, poupando bateria e recursos.
 * **Firebase (Google Firebase AI others):** O `FridgeRepository` usa ativamente o `callbackFlow` e o `addSnapshotListener` do Firestore ("3. Cloud Firestore.md") para garantir que a UI é notificada automaticamente sempre que outro membro da família faz uma alteração.
 * **Integração de ML (CameraX ML_Kit):** A câmara no `ScanScreen` foi desenvolvida em conformidade com as lições sobre CameraX e analisadores de imagem do ML Kit, processando *frames* assincronamente sem bloquear a Thread principal (UI).
@@ -101,7 +111,7 @@ O agente lidou perfeitamente com a estruturação de fluxos Firebase e a injeç�
 
 ## 9. Verification of AI-Generated Artifacts
 
-Todos os ecrãs gerados pela IA foram exaustivamente estudados por mim, sendo que li em detalhe como o Antigravity organizou as Coroutines e o Flow, comparando com o material das aulas (nomeadamente sobre a diferença importante de usar `collectLatest` em detrimento de um simples `collect` no nosso Firestore listener). Confirmei a estabilidade do build e a correção de lint warnings. O código do `ScanScreen` foi reavaliado para garantir o fecho correto do ImageProxy após cada frame analisado, prevenindo crashos de excesso de consumo de memória.
+Todos os ecrãs gerados pela IA foram exaustivamente estudados por mim, sendo que li em detalhe como o Antigravity organizou as Coroutines e o Flow, comparando com o material das aulas (nomeadamente sobre a diferença importante de usar `collectLatest` em detrimento de um simples `collect` no nosso Firestore listener). Confirmei a estabilidade do build e a correção de lint warnings. O código do `ScanScreen` foi reavaliado para garantir o fecho correto do ImageProxy após cada frame analisado, prevenindo crashes de excesso de consumo de memória.
 
 ## 10. Human vs AI Contribution
 
@@ -116,25 +126,25 @@ Todos os ecrãs gerados pela IA foram exaustivamente estudados por mim, sendo qu
 
 ## 11. Ethical and Responsible Use
 
-Sempre entendi a IA neste projeto como um acelerador e não um substituto da minha aprendizagem. Houve muito código que gerou dúvidas (como a razão pela qual usamos `collectAsStateWithLifecycle` no Compose em vez do normal). Pedi ao Claude para atuar como meu "professor assistente" para me explicar esses conceitos. Assim, não só garanto que o código faz o que quero, mas sei exatamente o motivo de estar lá. 
+Sempre entendi a IA neste projeto como um acelerador e não um substituto da minha aprendizagem. Houve muito código que gerou dúvidas (como a razão pela qual usamos `collectAsStateWithLifecycle` no Compose em vez do normal collectAsState). Pedi ao Claude para atuar como meu "professor assistente" para me explicar esses conceitos. Assim, não só garanto que o código faz o que quero, mas sei exatamente o motivo de estar lá. 
 Esta abordagem permite-me responsabilizar-me a 100% pelo produto final entregue ao professor, mitigando o risco de "código fantasma" que não saberia explicar numa defesa.
 
 ## 12. Version Control and Commit History
 
-O histórico espelha perfeitamente a abordagem iterativa, com checkpoints lógicos de construção e polimento. Começou por implementar o core base de arquitetura, avançou para Firebase, integrou as lógicas de câmara, passou por refinamento de listas e traduções exaustivas e fechou com grandes refatorizações baseadas na auditoria para garantir estabilidade e qualidade nos comentários.
+O desenvolvimento foi conduzido localmente com commits consolidados em marcos de entrega, por opção deliberada de só publicar código estável e funcional no repositório remoto. Esta abordagem resultou em dois commits principais: um correspondente à fundação arquitetural com as funcionalidades core operacionais e outro com a versão completa e polida da aplicação, seguidos de um commit final dedicado à revisão do relatório.
 
 ## 13. Difficulties and Lessons Learned
 
 A maior dor de cabeça deste projeto foi domar a visão computacional do ML Kit de forma a que fosse verdadeiramente útil para o utilizador da NéVazio. No início, a câmara detetava coisas como "Ingredient" ou "Food" e tentava adicionar isso ao frigorífico.
-A grande aprendizagem foi perceber que problemas de IA e Machine Learning resolvem-se muitas vezes com pensamento de Engenharia de Software clássica. Aprendi e criei (junto com o agente) um sistema de whitelist/blacklist com pesos diferentes (55% de confiança exigida para coisas que já sabíamos que eram comida, e 80% para o resto, bloqueando os termos genéricos da blacklist completamente). Isto resultou numa solução sólida onde a app agora entende que um Ovo é um Ovo sem spammar a UI com falsos positivos.
+A grande aprendizagem foi perceber que problemas de IA e Machine Learning resolvem-se muitas vezes com pensamento de Engenharia de Software clássica. Aprendi e criei (junto com o agente) um sistema de whitelist/blacklist com pesos diferentes (55% de confiança exigida para coisas que já sabíamos que eram comida, e 80% para o resto, bloqueando os termos genéricos da blacklist completamente). Isto resultou numa solução sólida onde a app agora entende que um Ovo é um Ovo sem encher a UI com falsos positivos.
 
 ### Conceitos Técnicos Esclarecidos
 
-**collectLatest vs collect:** A aula focou na importância de não bloquear a thread principal. Compreendi que ao ligarmos diretamente à cloud do Firebase Firestore, o servidor pode cuspir múltiplas alterações por segundo. O uso prático do `collectLatest` cancela as chamadas antigas se chegar uma alteração fresca, mantendo a performance do Android imaculada mesmo quando a app sofre spam de atualizações remotas.
+**collectLatest vs collect:** A aula focou na importância de não bloquear a thread principal. Compreendi que ao ligarmos diretamente à cloud do Firebase Firestore, o servidor pode fazer múltiplas alterações por segundo. O uso prático do `collectLatest` cancela as chamadas antigas se chegar uma alteração nova, mantendo a performance do Android imaculada mesmo quando a app sofre spam de atualizações remotas.
 
 ## 14. Future Improvements
 
-* **Modo Offline Resiliente:** Incorporar a Room Database não só como cache visual, mas com resolução de conflitos quando o telemóvel volta a ter net após modificar a lista de compras offline.
+* **Modo Offline Resiliente:** Incorporar a Room Database não só como cache visual, mas com resolução de conflitos quando o telemóvel volta a ter internset após modificar a lista de compras offline.
 * **Leitura de Talões de Supermercado:** Expandir a funcionalidade da câmara usando a API de Texto (OCR) em vez do Image Labeling, preenchendo automaticamente o frigorífico a partir do talão das compras.
 * **Widgets e Wearables:** Suporte à visualização da lista de faltas no pulso (Wear OS).
 
