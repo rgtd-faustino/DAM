@@ -49,10 +49,11 @@ Seguimos à risca o padrão MVVM (Model-View-ViewModel) e a arquitetura recomend
 
 ### Aplicação dos Ensinamentos (Slides)
 
-* **Jetpack Compose (Set 1 e 2):** Toda a UI foi feita de forma declarativa. O uso de `Modifier`, `LazyColumn` para as listas (no frigorífico e receitas) e o sistema de `Scaffold` reflete os princípios dos slides "JPC 2 - Core Composables" e "JPC 6 - Navigation".
-* **State Management (JPC 4 - State and Recomposition):** Todos os ViewModels expõem o estado através de um `StateFlow` único (ex: `HomeUiState`), consumido na UI com `collectAsStateWithLifecycle()` para garantir que só se reage a mudanças quando a app está visível, poupando bateria e recursos.
-* **Firebase (Google Firebase AI others):** O `FridgeRepository` usa ativamente o `callbackFlow` e o `addSnapshotListener` do Firestore ("3. Cloud Firestore.md") para garantir que a UI é notificada automaticamente sempre que outro membro da família faz uma alteração.
-* **Integração de ML (CameraX ML_Kit):** A câmara no `ScanScreen` foi desenvolvida em conformidade com as lições sobre CameraX e analisadores de imagem do ML Kit, processando *frames* assincronamente sem bloquear a Thread principal (UI).
+* **Jetpack Compose (Set 1 e 2):** Toda a UI foi feita de forma declarativa. O uso de `Modifier`, `LazyColumn` para as listas e o sistema de `Scaffold` reflete os princípios dos slides "JPC 2 - Core Composables and Layouts" e "JPC 6 - Navigation".
+* **State Management ("JPC 8 - Architecture  ViewModel Integration"):** Todos os ViewModels expõem o estado através de um `StateFlow` único (ex: `HomeUiState`), consumido na UI com `collectAsStateWithLifecycle()` para garantir que só se reage a mudanças quando a app está visível.
+* **Firebase ("2. Firebase Authentication" e "3. Cloud Firestore"):** O `FridgeRepository` usa ativamente o `addSnapshotListener` do Firestore ("3. Cloud Firestore") para garantir que a UI é notificada automaticamente sempre que outro membro da família faz uma alteração.
+* **Integração de APIs e Tarefas ("10. OkHttp Retrofit Ktor.md" e "12. Koin WorkManager.md"):** Implementámos clientes HTTP reativos via Retrofit e gerimos alertas de sistema (Notificações Android nativas na barra de topo) através do `WorkManager`, orquestrando as dependências com o Koin (e.g. `AppModule`).
+* **Integração de ML ("13. CameraX ML_Kit"):** A câmara no `ScanScreen` foi desenvolvida em conformidade com as lições sobre CameraX e analisadores de imagem do ML Kit.
 
 ## 4. Implementação
 
@@ -60,8 +61,8 @@ Seguimos à risca o padrão MVVM (Model-View-ViewModel) e a arquitetura recomend
 
 * **Jetpack Compose:** Construção da interface.
 * **Firebase Auth e Firestore:** Registo de utilizadores, login e base de dados NoSQL reativa.
-* **Retrofit e OkHttp:** Comunicação com a API do Spoonacular ("10. OkHttp Retrofit Ktor.md").
-* **Koin:** Injeção de dependências ("12. Koin WorkManager.md").
+* **Retrofit e OkHttp:** Cliente HTTP *type-safe* para uma comunicação robusta e segura com a API do Spoonacular ("10. OkHttp Retrofit Ktor").
+* **Koin:** Injeção de dependências ("12. Koin WorkManager").
 * **CameraX e ML Kit (Image Labeling):** Acesso à câmara e análise dos frames com o modelo de visão computacional da Google.
 * **Coil:** Carregamento assíncrono de imagens da web para as receitas.
 * **Coroutines e Kotlin Flows:** Processamento assíncrono e transmissão de estado sem bloqueios.
@@ -72,7 +73,7 @@ A integração da API de receitas utiliza Retrofit e passa pela conversão dinâ
 
 Foram feitas múltiplas rondas de validação manuais intensas na aplicação:
 
-* **Partilha Familiar:** Criada uma conta, testada a geração de um código, feita outra conta no mesmo dispositivo, introduzido o código e validada a partilha mútua da mesma lista de ingredientes.
+* **Partilha Familiar:** Criada uma conta, testada a geração de um código, feita outra conta noutro dispositivo, introduzido o código e validada a partilha mútua da mesma lista de ingredientes.
 * **Scan de Câmara:** Validámos exaustivamente o ML Kit. Ajustámos tolerâncias (confiança de 55% para itens normais como leite e ovos, e 80% de exigência para rejeitar categorias demasiado abertas como "Food" ou "Produce") para garantir que o utilizador não recebe "lixo" do scanner.
 * **Gestão de Sessão e Rotas:** Logout limpa corretamente o histórico de navegação (limpeza de backstack) para impedir que um utilizador aceda ao ecrã base usando a seta de retorno de sistema do Android após sair.
 * **Tradução:** Assegurámos um robusto mapeamento PT-EN e vice-versa de alimentos variando singular e plural.
@@ -97,13 +98,13 @@ O APK de debug compilado encontra-se também na raiz da pasta `NeVazio/` para in
 
 ## 7. Prompting Strategy
 
-Desta vez, a colaboração com o Google Antigravity e o Claude foi contínua e muito natural. O objetivo era montar um ecossistema complexo mas estável. Usei prompts diretivos mas construtivos.
-Forneci logo no início ao agente a arquitetura exigida, a documentação e os meus objetivos baseados no PDF final do projeto. Sempre que surgiam imperfeições (exemplo: a câmara a apanhar palavras genéricas em vez da comida), expliquei o meu raciocínio de "porquê é que isto não funciona para mim" e pedi à IA para afinar a tolerância (whitelists e blacklists). A comunicação foi iterativa, reportando bugs de UI e compilador, e discutindo decisões sobre o UX do sistema.
+A colaboração com o Google Antigravity e o Claude foi contínua e muito natural. O objetivo era montar um ecossistema complexo mas estável. Usei prompts diretivos mas construtivos.
+Forneci logo no início ao agente a arquitetura exigida, a documentação e os meus objetivos baseados no PDF final do projeto. Sempre que surgiam imperfeições (exemplo: a câmara a apanhar palavras genéricas em vez da comida), expliquei o meu raciocínio de "porque é que isto não funciona para mim" e pedi à IA para afinar a tolerância (whitelists e blacklists). A comunicação foi iterativa, reportando bugs de UI e compilador, e discutindo decisões sobre o UX do sistema.
 
 ## 8. Autonomous Agent Workflow
 
-O Antigravity brilhou particularmente no `ScanScreen` e no `HomeViewModel`. 
-O agente lidou perfeitamente com a estruturação de fluxos Firebase e a injeção do Koin. Além disso, depois de gerar código funcional, fez uma auditoria profunda a todos os ficheiros do projeto, corrigindo sozinho bugs não óbvios como memory leaks na thread da câmara (`cameraExecutor.shutdown()`), falta de blocos assíncronos (`.await()`) em escritas da Firestore, problemas no fluxo UI onde os painéis de adicionar se sobrepunham ao modo de edição, entre outras dezenas de pequenos arranjos que elevaram a nota do trabalho.
+A colaboração com o agente Antigravity foi essencial não apenas no `ScanScreen`, mas em toda a arquitetura de sincronização do projeto. 
+O agente lidou perfeitamente com a estruturação de fluxos Firebase e a injeção global de dependências com o Koin. Além disso, depois de gerar código funcional, fez uma auditoria profunda corrigindo sozinho problemas de concorrência na Firestore (como a falta de blocos assíncronos `.await()`), instanciou as lógicas de alertas de fundo via `WorkManager`, e integrou impecavelmente o mapeamento de respostas da API com o `Retrofit` em data classes Kotlin, entre outras dezenas de pequenos arranjos arquiteturais que garantiram a estabilidade global da app.
 
 **Intervenção Humana:**
 * Definição conceptual completa da ideia (NéVazio) e entrega do contexto.
@@ -113,7 +114,7 @@ O agente lidou perfeitamente com a estruturação de fluxos Firebase e a injeç�
 
 ## 9. Verification of AI-Generated Artifacts
 
-Todos os ecrãs gerados pela IA foram exaustivamente estudados por mim, sendo que li em detalhe como o Antigravity organizou as Coroutines e o Flow, comparando com o material das aulas (nomeadamente sobre a diferença importante de usar `collectLatest` em detrimento de um simples `collect` no nosso Firestore listener). Confirmei a estabilidade do build e a correção de lint warnings. O código do `ScanScreen` foi reavaliado para garantir o fecho correto do ImageProxy após cada frame analisado, prevenindo crashes de excesso de consumo de memória.
+Todo o código gerado pela IA foi exaustivamente estudado por mim, em especial a forma como as Coroutines e os fluxos StateFlow foram estruturados para evitar fugas de memória. Testei afincadamente as chamadas de rede do Retrofit para confirmar o parsing correto dos ingredientes, validei o acionamento de notificações nativas de sistema (Android) enviadas pelo WorkManager em *background*, e assegurei em vários dispositivos simultâneos que a sincronização da Firestore era feita em tempo real sem sobreposições anormais de estado.
 
 ## 10. Human vs AI Contribution
 
@@ -137,12 +138,15 @@ O desenvolvimento foi conduzido localmente com commits consolidados em marcos de
 
 ## 13. Difficulties and Lessons Learned
 
-A maior dor de cabeça deste projeto foi domar a visão computacional do ML Kit de forma a que fosse verdadeiramente útil para o utilizador da NéVazio. No início, a câmara detetava coisas como "Ingredient" ou "Food" e tentava adicionar isso ao frigorífico.
-A grande aprendizagem foi perceber que problemas de IA e Machine Learning resolvem-se muitas vezes com pensamento de Engenharia de Software clássica. Aprendi e criei (junto com o agente) um sistema de whitelist/blacklist com pesos diferentes (55% de confiança exigida para coisas que já sabíamos que eram comida, e 80% para o resto, bloqueando os termos genéricos da blacklist completamente). Isto resultou numa solução sólida onde a app agora entende que um Ovo é um Ovo sem encher a UI com falsos positivos.
+Uma dificuldade inicial deste projeto consistiu em domar a visão computacional do ML Kit. Para evitar a deteção de itens demasiado genéricos como "Food" ou "Ingredient", criámos um sistema iterativo de *whitelist/blacklist* com pesos de confiança diferenciados. Isto resolveu o problema (documentado no código do `ScanScreen.kt`) e evitou encher o frigorífico de falsos positivos.
+
+Outro problema prático muito limitativo com que me deparei envolveu o esgotamento da quota diária da API do Spoonacular. Inicialmente, a app efetuava pedidos de rede redundantes sempre que navegávamos para o menu de receitas ou abríamos os detalhes de uma receita específica, esgotando todas as *calls* gratuitas numa única sessão de testes. A resolução deste problema passou por implementar uma estratégia de retenção de dados e *cache* em memória no `ViewModel`, garantindo que as listas de receitas e os seus detalhes previamente descarregados são reaproveitados em vez de repetir o pedido à API.
 
 ### Conceitos Técnicos Esclarecidos
 
-**collectLatest vs collect:** A aula focou na importância de não bloquear a thread principal. Compreendi que ao ligarmos diretamente à cloud do Firebase Firestore, o servidor pode fazer múltiplas alterações por segundo. O uso prático do `collectLatest` cancela as chamadas antigas se chegar uma alteração nova, mantendo a performance do Android imaculada mesmo quando a app sofre spam de atualizações remotas.
+* **Estratégias de Caching e Retenção em Memória:** Com o problema do limite de chamadas à API, consolidei a importância de o `ViewModel` atuar como uma *cache* viva, retendo os dados ao longo das viagens de navegação para que a recomposição da UI não origine chamadas HTTP repetidas, o que otimiza recursos e aumenta a rapidez da app.
+* **collectLatest vs collect:** Compreendi que, ao ligarmos diretamente à cloud do Firestore, o servidor pode disparar múltiplas alterações por segundo. O uso prático do `collectLatest` cancela as chamadas antigas perante uma nova alteração, mantendo a performance da aplicação imaculada.
+* **Prevenção de Ações Acidentais:** Tal como detalhado nos comentários do `ShoppingViewModel.kt`, entendi a relevância de oferecer a "possibilidade de reversão da ação" fluida no UI (desmarcar a *checkbox* de um item "comprado" para ele voltar instantaneamente à lista "por comprar") em vez de apresentar *popups* de bloqueio perante cada ação, melhorando a rapidez da experiência do utilizador.
 
 ## 14. Future Improvements
 
